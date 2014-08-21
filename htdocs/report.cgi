@@ -16,6 +16,7 @@ use lib './lib';
 
 use Relais2::Duedate;
 use Relais2::Recall;
+use Relais2::Exhausted;
 
 print header();
 
