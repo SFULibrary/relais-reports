@@ -1,0 +1,74 @@
+body {
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 80%;
+}
+
+table {
+	padding: 0px;
+	margin: 0px;
+	background: #BBBBBB;
+}
+
+tr {
+	padding: 0px;
+	margin: 0px;
+}	
+
+td {
+	padding: 2px;
+	margin: 0px;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 80%;
+	background: #FFFFFF;
+}
+
+tr.line0 input {
+	border: 0;
+	background: #FFFFFF;
+}
+
+tr.line1 input {
+	border: 0;
+	background: #EEEEEE;
+}
+
+tr.line0  td {
+	background: #FFFFFF;
+}
+
+tr.line1 td {
+	background: #EEEEEE;
+}
+
+td.date, td.requestnum {
+	white-space: nowrap;
+}
+
+
+th {
+	color: black;
+	background: #AADDEE;
+	font-weight: bold;
+	font-size: 80%;
+	white-space: nowrap;
+}
+
+h1 {
+	font-weight: bold;
+	font-size: 120%;
+}
+
+h2 {
+	font-weight: bold;
+	font-size: 110%;
+}
+
+.sortable .headerSortUp:after {
+    content: " \2191";
+    font-weight: bold;
+}
+
+.sortable .headerSortDown:after {
+    content: " \2193";
+    font-weight: bold;
+}
