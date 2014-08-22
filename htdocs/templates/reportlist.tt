@@ -7,5 +7,6 @@
 <li><a href="?report=duedate">Due date</a></li>
 <li><a href="?report=recall">Recall</a></li>
 <li><a href="?report=books">Books</a></li>
+<li><a href="?report=journals">Journals</a></li>
 </ul>
 </nav>
