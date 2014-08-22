@@ -33,6 +33,15 @@ sub columns {
 	)];
 }
 
+sub process {
+	my $self = shift;
+	my $row = shift;
+	$row->{NEED_BY_DATE} = substr($row->{NEED_BY_DATE}, 0, 10);
+	return $row;
+}
+
+
+
 sub columnNames {
 	return {
 		REQUEST_NUMBER => 'Request Number',
@@ -44,5 +53,13 @@ sub columnNames {
 		BIBLIOGRAPHY_NUM => 'Tag',
 	};
 }
+
+sub columnClasses {
+	return {
+		REQUEST_NUMBER => "requestnum", 
+		NEED_BY_DATE => "date",
+	};
+}
+
 
 1;

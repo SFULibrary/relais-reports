@@ -32,6 +32,16 @@ sub columns {
 	)];
 }
 
+
+sub process {
+	my $self = shift;
+	my $row = shift;
+	$row->{SUPPLIER_DATE_SENT} = substr($row->{SUPPLIER_DATE_SENT}, 0, 10);
+	$row->{NEED_BY_DATE} = substr($row->{NEED_BY_DATE}, 0, 10);
+	return $row;
+}
+
+
 sub columnNames {
 	return {
 		REQUEST_NUMBER => 'Request Number',
@@ -42,6 +52,15 @@ sub columnNames {
 		SUPPLIER_CODE_1 => 'Supplier',
 		SUPPLIER_DATE_SENT => 'Sent',
 		NEED_BY_DATE => 'Need By'
+	};
+}
+
+
+sub columnClasses {
+	return {
+		REQUEST_NUMBER => "requestnum", 
+		NEED_BY_DATE => "date",
+		SUPPLIER_DATE_SENT => "date",
 	};
 }
 

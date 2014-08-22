@@ -31,6 +31,13 @@ sub columns {
 	)];
 }
 
+sub process {
+	my $self = shift;
+	my $row = shift;
+	$row->{DUE_DATE} = substr($row->{DUE_DATE}, 0, 10);
+	return $row;
+}
+
 sub columnNames {
 	return {
 		REQUEST_NUMBER => "Request number", 
@@ -42,5 +49,13 @@ sub columnNames {
 		SUPPLIER_CODE_1 => "Supplier"
 	};
 }
+
+sub columnClasses {
+	return {
+		REQUEST_NUMBER => "requestnum", 
+		DUE_DATE => "date",
+	};
+}
+
 
 1;

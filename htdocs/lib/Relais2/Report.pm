@@ -35,13 +35,37 @@ sub columns {
 sub columnNames {
 }
 
+sub columnClasses {	
+}
+
+sub preprocess {
+	my $self = shift;
+	my $row = shift;
+	
+	foreach my $key (keys %$row) {
+		$row->{$key} =~ s/\r//g;
+		$row->{$key} =~ s/\n//g;
+		$row->{$key} =~ s/^\s*|\s*$//;
+	}
+	
+	return $row;
+}
+
+sub process {
+	my $self = shift;
+	my $row = shift;
+	
+	return $row;
+}
+
 sub rows {
 	my $self = shift;
 	my $sth = shift;
 	my @rows = ();
 	
 	while(my $row = $sth->fetchrow_hashref()) {
-		push @rows, $row;
+		$row = $self->preprocess($row);
+		push @rows, $self->process($row);
 	}
 	return \@rows;
 }
