@@ -1,10 +1,28 @@
 package Relais2::Recall;
 
+=head1 NAME
+
+Relais2::Recall - Overdue item report
+
+=cut
+
 use parent 'Relais2::Report';
 
+=head2 C<< $report->name >>
+
+Return the name of the report.
+
+=cut
+
 sub name {
-	return "Recall";	
+	return "Recall";
 }
+
+=head2 C<< $report->query >>
+
+Return the SQL query.
+
+=cut
 
 sub query {
 
@@ -26,38 +44,60 @@ FROM
 ENDSQL;
 }
 
+=head2 C<< $report->columns >>
+
+Return an arrayref of the SQL columns in the report, in the order they should appear.
+
+=cut
+
 sub columns {
 	return [qw(
-		REQUEST_NUMBER TITLE PATRON_NAME PATRON_SURNAME PATRON_TYPE DUE_DATE SUPPLIER_CODE_1
-	)];
+		  REQUEST_NUMBER TITLE PATRON_NAME PATRON_SURNAME PATRON_TYPE DUE_DATE SUPPLIER_CODE_1
+		  )];
 }
+
+=head2 C<< $row = $report->process($row) >>
+
+Process a row before it is output. 
+
+=cut
 
 sub process {
 	my $self = shift;
-	my $row = shift;
+	my $row  = shift;
 	$row->{DUE_DATE} = substr($row->{DUE_DATE}, 0, 10);
 	return $row;
 }
 
+=head2 C<< $report->columnNames >>
+
+Return a hashref mapping SQL column names to human readable column names.
+
+=cut
+
 sub columnNames {
 	return {
-		REQUEST_NUMBER => 'Request Number',
-		TITLE => 'Title',
-		PATRON_NAME => 'First name',
-		PATRON_SURNAME => 'Surname',
-		PATRON_TYPE => 'Status',
-		DUE_DATE => 'Due date',
+		REQUEST_NUMBER  => 'Request Number',
+		TITLE           => 'Title',
+		PATRON_NAME     => 'First name',
+		PATRON_SURNAME  => 'Surname',
+		PATRON_TYPE     => 'Status',
+		DUE_DATE        => 'Due date',
 		SUPPLIER_CODE_1 => 'Supplier',
 	};
 }
 
+=head2 C<< $report->columnClasses >>
+
+Return a hashref mapping SQL column names to HTML class attribute values.
+
+=cut
 
 sub columnClasses {
 	return {
-		REQUEST_NUMBER => "requestnum", 
-		DUE_DATE => "date",
+		REQUEST_NUMBER => "requestnum",
+		DUE_DATE       => "date",
 	};
 }
-
 
 1;

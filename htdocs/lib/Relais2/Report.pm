@@ -1,11 +1,34 @@
 package Relais2::Report;
 
+=head1 NAME
+
+Relais2::Report - Abstract base class for Relais reports
+
+=head1 SYNOPSIS
+
+  package Some::Report;
+  use parent 'Relais2::Report';
+
+And then somewhere far far away...
+
+  my $report = Some::Report->new();
+  my $rows = $report->execute();
+  
+=cut
+  
+
 use strict;
 use warnings;
 
 use Data::Dumper;
 $Data::Dumper::Indent = 1;
 $Data::Dumper::Sortkeys = 1;
+
+=head2 AUTOLOAD
+
+Make blessed attributes automatically accessible.
+
+=cut
 
 sub AUTOLOAD {
     my ($name) = our $AUTOLOAD;
@@ -37,6 +60,12 @@ sub AUTOLOAD {
     goto &$AUTOLOAD;
 }
 
+=head2 C<< new() >>
+
+Constructor. Automatically calls C<<$self->init()>>.
+
+=cut
+
 sub new {
     my $class = shift;
     my $self  = {};
@@ -45,10 +74,23 @@ sub new {
     return $self;
 }
 
+=head2 C<< $report->init() >>
+
+Initialize the report.
+
+=cut
+
 sub init {
 	my $self = shift;
 	$self->{parameters} = [];
 }
+
+
+=head2 C<< $report->addParameter($parameter) >>
+
+Add a L<Relais::Parameter> to the report.
+
+=cut
 
 sub addParameter {
 	my $self = shift;
@@ -56,30 +98,61 @@ sub addParameter {
 	push @{$self->{parameters}}, $param;
 }
 
+=head2 C<< $report->name >>
+
+Return the name of the report.
+
+=cut
+
 sub name {
 	
 }
 
-sub description {
-	
-}
+=head2 C<< $report->query >>
 
-sub parameters {
-	my $self = shift;
-	return $self->{parameters};
-}
+Return the SQL query.
+
+=cut
 
 sub query {
+	return "";
 }
+
+=head2 C<< $report->columns >>
+
+Return an arrayref of the SQL columns in the report, in the order they should appear.
+
+=cut
 
 sub columns {
+	return []
 }
+
+=head2 C<< $report->columnNames >>
+
+Return a hashref mapping SQL column names to human readable column names.
+
+=cut
 
 sub columnNames {
+	return {}
 }
 
+=head2 C<< $report->columnClasses >>
+
+Return a hashref mapping SQL column names to HTML class attribute values.
+
+=cut
+
 sub columnClasses {	
+	return {}
 }
+
+=head2 C<< $row = $report->preprocess($row) >>
+
+Strip out extraneous whitespace from row data
+
+=cut
 
 sub preprocess {
 	my $self = shift;
@@ -94,12 +167,26 @@ sub preprocess {
 	return $row;
 }
 
+=head2 C<< $row = $report->process($row) >>
+
+Process a row before it is output. 
+
+=cut
+
 sub process {
 	my $self = shift;
 	my $row = shift;
 	
 	return $row;
 }
+
+=head2 C<< $rows = $report->rows($sth) >>
+
+Fetch the rows from a statement handle C<< $sth >> after 
+the statment has been executed. Automatically calls
+C<<preprocess>> and C<<process>> for each row.
+
+=cut
 
 sub rows {
 	my $self = shift;
@@ -113,6 +200,13 @@ sub rows {
 	return \@rows;
 }
 
+=head2 C<< $rows = $report->execute($dbh) >>
+
+Execute the report and return the cleaned rows. Any report parameters
+are automatically bound.
+
+=cut
+
 sub execute {
 	my $self = shift;
 	my $dbh = shift;
@@ -121,13 +215,8 @@ sub execute {
 	my $sth = $dbh->prepare($self->query());
 	
 	foreach my $param (@{$self->parameters()}) {
-		my $name = $param->name();
-		my $value = $param->default();		
-		if(defined $q->param($name)) {
-			$value = $q->param($name);
-		}
-		print STDERR "binding $name to $value";
-		$sth->bind_param($name, $value);		
+		my $value = $param->value($q);	
+		$sth->bind_param($param->bind(), $value);		
 	}
 	$sth->execute();
 	return $self->rows($sth);	

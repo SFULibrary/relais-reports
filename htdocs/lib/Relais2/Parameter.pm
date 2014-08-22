@@ -1,11 +1,39 @@
 package Relais2::Parameter;
 
+=head1 NAME
+
+Relais2::Parameter - A parameter in a report
+
+=HEAD1 FIELDS
+
+=over 4
+
+=item label - The human-readable label for the parameter
+
+=item name - the HTML name attribute value
+
+=item bind - the SQL placeholder for the parameter
+
+=item type - the HTML input type attribute value
+
+=item default - the default value for the parameter
+
+=back
+
+=cut
+
 use strict;
 use warnings;
 
 use Data::Dumper;
 $Data::Dumper::Indent   = 1;
 $Data::Dumper::Sortkeys = 1;
+
+=head2 AUTOLOAD
+
+Make blessed attributes automatically accessible.
+
+=cut
 
 sub AUTOLOAD {
 	my ($name) = our $AUTOLOAD;
@@ -42,6 +70,12 @@ sub AUTOLOAD {
 	goto &$AUTOLOAD;
 }
 
+=head2 C<< my $param = Relais::Parameter->new({ ... }); >>
+
+Construct a new report parameter. Pass the options in a hash ref.
+
+=cut
+
 sub new {
 	my $class = shift;
 	my $self  = {};
@@ -50,6 +84,12 @@ sub new {
 	return $self;
 }
 
+=head2 C<< init( {...} ) >>
+
+Initialize the report parameter.
+
+=cut
+
 sub init {
 	my $self = shift;
 	my $opts = shift;
@@ -57,11 +97,16 @@ sub init {
 	$self->{label} = defined $opts->{label} ? $opts->{label} : '';
 	$self->{name}  = defined $opts->{name}  ? $opts->{name}  : '';
 	$self->{bind}  = defined $opts->{bind}  ? $opts->{bind}  : '';
-	$self->{description} =
-	  defined $opts->{description} ? $opts->{description} : '';
 	$self->{type}    = defined $opts->{type}    ? $opts->{type}    : '';
 	$self->{default} = defined $opts->{default} ? $opts->{default} : '';
 }
+
+=head2 C<< my $v = $parameter->value($cgi) >>
+
+Get the value of the parameter from the CGI query object, or
+the default value.
+
+=cut
 
 sub value {
 	my $self = shift;

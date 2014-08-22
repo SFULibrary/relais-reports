@@ -1,5 +1,11 @@
 #!/usr/bin/perl
 
+=head1 NAME
+
+report.cgi - Reporting tool for Relais 
+
+=cut
+
 use strict;
 use warnings;
 
@@ -24,35 +30,77 @@ use Relais2::Pending;
 use Relais2::Review;
 use Relais2::Search;
 use Relais2::Books;
+use Relais2::Journals;
 
-my $conn = 'xXxXxXxXxXx';
+=head2 C<< $reportID = getReportID($cgi) >> 
 
-my $connections = {
-	xXxXxXxXxXx => ['xXxXxXxXxXx', 'xXxXxXxXxXx',   'xXxXxXxXxXx'],
-	xXxXxXxXxXx => ['xXxXxXxXxXx', 'xXxXxXxXxXx', 'xXxXxXxXxXx'],
-};
+Determine the requested report ID.
 
-my $q = CGI->new();
-try {
+=cut
 
-	my $dbh = DBI->connect(
-		@{$connections->{$conn}},
-		{PrintError => 1, RaiseError => 1}
-	) or die "cannot connect to data source: $DBI::errstr";
-
+sub getReportID {
+	my $q        = shift;
 	my $reportID = "Duedate";
 	if (defined $q->param('report') && $q->param('report') =~ m/^(\w+)$/) {
 		$reportID = ucfirst($1);
 	}
+	return $reportID;
+}
+
+=head2 C<< $report = getReport($id) >>
+
+Get the requested report object.
+
+=cut
+
+sub getReport {
+	my $reportID  = shift;
 	my $reportPkg = 'Relais2::' . $reportID;
-	my $report    = $reportPkg->new();
+	return $reportPkg->new();
+}
 
-	my $rows = $report->execute($dbh, $q);
+=head2 C<< $format = getReportFormat($cgi) >>
 
+Determine the requested report output format, which defaults to HTML.
+
+=cut
+
+sub getReportFormat {
+	my $q            = shift;
 	my $reportFormat = 'html';
 	if (defined $q->param('format') && $q->param('format') =~ m/^(\w+)$/) {
 		$reportFormat = $1;
 	}
+	return $reportFormat;
+}
+
+=head2 C<< $dbh = getCommection($name) >>
+
+Connect to the named database. 
+
+=cut
+
+sub getConnection {
+	my $id          = shift;
+	my $connections = {
+		xXxXxXxXxXx => ['xXxXxXxXxXx', 'xXxXxXxXxXx',   'xXxXxXxXxXx'],
+		xXxXxXxXxXx => ['xXxXxXxXxXx', 'xXxXxXxXxXx', 'xXxXxXxXxXx'],
+	};
+	my $dbh = DBI->connect(
+		@{$connections->{$id}},
+		{PrintError => 1, RaiseError => 1}
+	) or die "cannot connect to data source: $DBI::errstr";
+	return $dbh;
+}
+
+my $q = CGI->new();
+try {
+
+	my $dbh = getConnection('xXxXxXxXxXx');
+	my $reportID     = getReportID($q);
+	my $report       = getReport($reportID);
+	my $reportFormat = getReportFormat($q);
+	my $rows         = $report->execute($dbh, $q);
 
 	my $tt = Template->new({
 			INCLUDE_PATH => ['templates', 'templates'],
@@ -88,7 +136,6 @@ try {
 				columnClasses => $report->columnClasses(),
 			}) or die "Template export error: " . $tt->error() . "\n";
 	}
-
 }
 catch {
 	print $q->header();

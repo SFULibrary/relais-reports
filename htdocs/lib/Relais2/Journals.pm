@@ -1,17 +1,17 @@
-package Relais2::Books;
+package Relais2::Journals;
 
 =head1 NAME
 
-Relais2::Books - Report books requested more than once in a year.
+Relais2::Journals - Summary of journal titles requested
 
 =cut
 
 use Relais2::Parameter;
 use parent 'Relais2::Report';
 
-=head2 init()
+=head2 C<< init() >>
 
-Add Year as a report parameter
+Add the year parameter
 
 =cut
 
@@ -37,7 +37,7 @@ Return the name of the report.
 =cut
 
 sub name {
-	return "Book Report";	
+	return "Journal Report";	
 }
 
 =head2 C<< $report->query >>
@@ -48,19 +48,17 @@ Return the SQL query.
 
 sub query {
 
-	return << 'ENDSQL;'	
+	return << 'ENDSQL;'
 SELECT 
-	COUNT(*) CT, dbo.ID_REQUEST.TITLE, dbo.ID_REQUEST.AUTHOR, dbo.ID_REQUEST.PUBLISHER, 
-	dbo.ID_REQUEST.PUBLICATION_YEAR, dbo.ID_REQUEST.EDITION, dbo.ID_REQUEST.ISBN
+	COUNT(*) CT, dbo.ID_REQUEST.TITLE, dbo.ID_REQUEST.PUBLISHER, dbo.ID_REQUEST.PUBLICATION_YEAR
 FROM 
 	dbo.ID_REQUEST
 WHERE 
 		dbo.ID_REQUEST.DATE_ENTERED like '%' + :yr + '%' 
-	and dbo.ID_REQUEST.PUBLICATION_TYPE IN ('B') 
+	and dbo.ID_REQUEST.PUBLICATION_TYPE IN ('J') 
 	and dbo.ID_REQUEST.REQUEST_NUMBER like 'PAT%'
 GROUP BY 
-	dbo.ID_REQUEST.TITLE, dbo.ID_REQUEST.AUTHOR, dbo.ID_REQUEST.PUBLISHER, 
-	dbo.ID_REQUEST.PUBLICATION_YEAR, dbo.ID_REQUEST.EDITION, dbo.ID_REQUEST.ISBN
+	dbo.ID_REQUEST.TITLE, dbo.ID_REQUEST.PUBLISHER, dbo.ID_REQUEST.PUBLICATION_YEAR
 HAVING 
 	COUNT(*) >= 2
 ENDSQL;
@@ -74,10 +72,9 @@ Return an arrayref of the SQL columns in the report, in the order they should ap
 
 sub columns {
 	return [qw(
-		CT TITLE AUTHOR PUBLISHER PUBLICATION_YEAR EDITION ISBN
+		CT TITLE PUBLISHER PUBLICATION_YEAR
 	)];
 }
-
 
 =head2 C<< $report->columnNames >>
 
@@ -89,11 +86,8 @@ sub columnNames {
 	return {
 		CT => 'Count',
 		TITLE => 'Title', 
-		AUTHOR => 'Author', 
 		PUBLISHER => 'Publisher',
 		PUBLICATION_YEAR => 'Pub Year',
-		EDITION => 'Edition',
-		ISBN => 'ISBN'
 	};
 }
 
