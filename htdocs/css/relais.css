@@ -3,6 +3,39 @@ body {
 	font-size: 80%;
 }
 
+nav {
+	border-bottom: 1px solid blue;
+}
+
+nav ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	height: 20px;
+}
+
+nav li {
+	display: block;
+	width: 120px;
+	float: left;
+}
+
+nav a {
+	text-decoration: none;
+}
+
+h1 {
+	clear: both;
+}
+
+a.export {
+	width: 48px;
+	display: block;
+	position: absolute;
+	right: 0px;
+	top: 40px;
+}
+
 table {
 	padding: 0px;
 	margin: 0px;
@@ -19,25 +52,16 @@ td {
 	margin: 0px;
 	font-family: Verdana, Arial, sans-serif;
 	font-size: 80%;
-	background: #FFFFFF;
 }
 
-tr.line0 input {
+tr:nth-child(odd) {
+	background-color: #eee;
 	border: 0;
-	background: #FFFFFF;
 }
 
-tr.line1 input {
+tr:nth-child(even) {
+	background-color: #fff;
 	border: 0;
-	background: #EEEEEE;
-}
-
-tr.line0  td {
-	background: #FFFFFF;
-}
-
-tr.line1 td {
-	background: #EEEEEE;
 }
 
 td.date, td.requestnum {

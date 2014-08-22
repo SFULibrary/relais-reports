@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en_CA">
 <head>
- <title>Due Date</title>
+ <title>[% name %]</title>
  <link rel="StyleSheet" href="css/xXxXxXxXxXx.css" type="text/css">
  <script src="js/jquery-1.11.1.min.js"></script>
  <script src="js/jquery.tablesorter.min.js"></script>
@@ -17,10 +17,13 @@
 <li><a href="?report=search">Search Manual</a></li>
 <li><a href="?report=duedate">Due date</a></li>
 <li><a href="?report=recall">Recall</a></li>
+<li><a href="?report=books">Books</a></li>
 </ul>
 </nav>
 
 <h1>[% name %]</h1>
+<a class="export" href="?report=[% id %]&amp;format=csv">CSV</a>
+<p>Found [% rows.size %] results.</p>
 <table border="0" cellspacing="1" class="sortable">
 <thead>
  <tr>
@@ -34,7 +37,7 @@
 [% FOREACH row IN rows %]
   <tr>
     [% FOREACH col IN columns %]
-    	<td>[% row.$col %]</td>
+    	<td class="[% columnClasses.$col %]">[% row.$col %]</td>
     [% END %]
   </tr>
 [% END %]
