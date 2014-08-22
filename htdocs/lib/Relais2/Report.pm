@@ -50,6 +50,12 @@ sub init {
 	$self->{parameters} = [];
 }
 
+sub addParameter {
+	my $self = shift;
+	my $param = shift;
+	push @{$self->{parameters}}, $param;
+}
+
 sub name {
 	
 }
@@ -106,3 +112,25 @@ sub rows {
 	}
 	return \@rows;
 }
+
+sub execute {
+	my $self = shift;
+	my $dbh = shift;
+	my $q = shift;
+	
+	my $sth = $dbh->prepare($self->query());
+	
+	foreach my $param (@{$self->parameters()}) {
+		my $name = $param->name();
+		my $value = $param->default();		
+		if(defined $q->param($name)) {
+			$value = $q->param($name);
+		}
+		print STDERR "binding $name to $value";
+		$sth->bind_param($name, $value);		
+	}
+	$sth->execute();
+	return $self->rows($sth);	
+}
+
+1;

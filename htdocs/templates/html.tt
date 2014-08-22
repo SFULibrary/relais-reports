@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en_CA">
 <head>
- <title>[% name %]</title>
+ <title>[% report.name %]</title>
  <link rel="StyleSheet" href="css/xXxXxXxXxXx.css" type="text/css">
  <script src="js/jquery-1.11.1.min.js"></script>
  <script src="js/jquery.tablesorter.min.js"></script>
@@ -21,13 +21,32 @@
 </ul>
 </nav>
 
-<h1>[% name %]</h1>
-<a class="export" href="?report=[% id %]&amp;format=csv">CSV</a>
+<h1>[% report.name %]</h1>
+<a class="export" href="?report=[% id %]&amp;format=csv[% FOREACH parameter IN parameters %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %]">CSV</a>
+
+[% IF parameters.size %]
+
+<form method="GET">
+<fieldset>
+<legend>Parameters</legend>
+<input type="hidden" name="report" value="[% id %]"/>
+[% FOREACH parameter IN parameters %]
+  <label for="[% parameter.name %]">[% parameter.label %] 
+  	<input type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]"/></label><br />
+[% END %]
+
+<button type="submit">Submit</button>
+
+</fieldset>
+</form>
+
+[% END %]
+
 <p>Found [% rows.size %] results.</p>
 <table border="0" cellspacing="1" class="sortable">
 <thead>
  <tr>
-   [% FOREACH col IN columns %]
+   [% FOREACH col IN report.columns %]
    <th>[% columnNames.$col %]</th>
    [% END %]
    </tr> 
