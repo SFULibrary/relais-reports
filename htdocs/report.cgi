@@ -14,14 +14,16 @@ use Try::Tiny;
 
 use lib './lib';
 
+use Text::CSV;
+use IO::Wrap;
+
 use Relais2::Duedate;
 use Relais2::Recall;
 use Relais2::Exhausted;
 use Relais2::Pending;
 use Relais2::Review;
 use Relais2::Search;
-
-print header();
+use Relais2::Books;
 
 my $conn = 'xXxXxXxXxXx';
 
@@ -36,37 +38,65 @@ try {
 		{PrintError => 1, RaiseError => 1}
 	) or die "cannot connect to data source: $DBI::errstr";
 
-	my $reportParam = param('report');
-	my $reportName  = "Duedate";
-	if ($reportParam =~ m/^(\w+)$/) {
-		$reportName = ucfirst($1);
+	my $reportID = "Duedate";
+	if (defined param('report') && param('report') =~ m/^(\w+)$/) {
+		$reportID = ucfirst($1);
 	}
-	my $reportPkg = 'Relais2::' . $reportName;
+	my $reportPkg = 'Relais2::' . $reportID;
 	my $report    = $reportPkg->new();
 
 	my $sth = $dbh->prepare($report->query());
 	$sth->execute();
 	my $rows = $report->rows($sth);
 
+	my $reportFormat = 'html';
+	if (param('format') =~ m/^(\w+)$/) {
+		$reportFormat = $1;
+	}
+
+	my $tt = Template->new({
+			INCLUDE_PATH => ['templates', 'templates'],
+		}) or die "Template loading: $Template::ERROR\n";
+
+	if ($reportFormat eq 'html') {
+		print header();
+		$tt->process(
+			"html.tt",
+			{
+				rows          => $rows,
+				name          => $report->name(),
+				id			  => lc($reportID),
+				columns       => $report->columns(),
+				columnNames   => $report->columnNames(),
+				columnClasses => $report->columnClasses(),
+			}) or die "Template processing error: " . $tt->error() . "\n";
+	}
+	if ($reportFormat eq 'csv') {
+		print header( 
+			-type => 'application/octet-stream',
+			-attachment => $reportID . ".csv"
+		);
+		$tt->process(
+			"csv.tt",
+			{
+				rows          => $rows,
+				name          => $report->name(),
+				columns       => $report->columns(),
+				columnNames   => $report->columnNames(),
+				columnClasses => $report->columnClasses(),
+			}) or die "Template processing error: " . $tt->error() . "\n";
+	}
+
+}
+catch {
+	print header();
 	my $tt = Template->new({
 			INCLUDE_PATH => ['templates', 'templates'],
 		}) or die "Template loading: $Template::ERROR\n";
 
 	$tt->process(
-		'report.tt',
+		'error.tt',
 		{
-			rows        => $rows,
-			name 		=> $report->name(),
-			columns     => $report->columns(),
-			columnNames => $report->columnNames(),
-		}) or die "Template processing error: " . $tt->error() . "\n";
-} catch {
-my $tt = Template->new({
-			INCLUDE_PATH => ['templates', 'templates'],
-		}) or die "Template loading: $Template::ERROR\n";
-
-	$tt->process(
-		'error.tt', {
 			message => $_,
 		}) or die "Template processing error: " . $tt->error() . "\n";
 };
