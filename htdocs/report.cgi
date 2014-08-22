@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use CGI qw/:standard/;
+use CGI;
 use Data::Dumper;
 $Data::Dumper::Indent   = 1;
 $Data::Dumper::Sortkeys = 1;
@@ -32,25 +32,25 @@ my $connections = {
 	xXxXxXxXxXx => ['xXxXxXxXxXx', 'xXxXxXxXxXx', 'xXxXxXxXxXx'],
 };
 
+my $q = CGI->new();
 try {
+
 	my $dbh = DBI->connect(
 		@{$connections->{$conn}},
 		{PrintError => 1, RaiseError => 1}
 	) or die "cannot connect to data source: $DBI::errstr";
 
 	my $reportID = "Duedate";
-	if (defined param('report') && param('report') =~ m/^(\w+)$/) {
+	if (defined $q->param('report') && $q->param('report') =~ m/^(\w+)$/) {
 		$reportID = ucfirst($1);
 	}
 	my $reportPkg = 'Relais2::' . $reportID;
 	my $report    = $reportPkg->new();
 
-	my $sth = $dbh->prepare($report->query());
-	$sth->execute();
-	my $rows = $report->rows($sth);
+	my $rows = $report->execute($dbh, $q);
 
 	my $reportFormat = 'html';
-	if (param('format') =~ m/^(\w+)$/) {
+	if (defined $q->param('format') && $q->param('format') =~ m/^(\w+)$/) {
 		$reportFormat = $1;
 	}
 
@@ -59,21 +59,23 @@ try {
 		}) or die "Template loading: $Template::ERROR\n";
 
 	if ($reportFormat eq 'html') {
-		print header();
+		print $q->header();
 		$tt->process(
 			"html.tt",
 			{
+				id            => lc($reportID),
 				rows          => $rows,
-				name          => $report->name(),
-				id			  => lc($reportID),
+				report        => $report,
 				columns       => $report->columns(),
 				columnNames   => $report->columnNames(),
 				columnClasses => $report->columnClasses(),
+				parameters    => $report->parameters(),
+				query         => $q,
 			}) or die "Template processing error: " . $tt->error() . "\n";
 	}
 	if ($reportFormat eq 'csv') {
-		print header( 
-			-type => 'application/octet-stream',
+		print $q->header(
+			-type       => 'application/octet-stream',
 			-attachment => $reportID . ".csv"
 		);
 		$tt->process(
@@ -84,12 +86,12 @@ try {
 				columns       => $report->columns(),
 				columnNames   => $report->columnNames(),
 				columnClasses => $report->columnClasses(),
-			}) or die "Template processing error: " . $tt->error() . "\n";
+			}) or die "Template export error: " . $tt->error() . "\n";
 	}
 
 }
 catch {
-	print header();
+	print $q->header();
 	my $tt = Template->new({
 			INCLUDE_PATH => ['templates', 'templates'],
 		}) or die "Template loading: $Template::ERROR\n";
