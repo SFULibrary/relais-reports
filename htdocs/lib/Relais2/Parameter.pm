@@ -1,4 +1,4 @@
-package Relais2::Report;
+package Relais2::Parameter;
 
 use strict;
 use warnings;
@@ -37,6 +37,7 @@ sub AUTOLOAD {
     goto &$AUTOLOAD;
 }
 
+
 sub new {
     my $class = shift;
     my $self  = {};
@@ -47,62 +48,12 @@ sub new {
 
 sub init {
 	my $self = shift;
-	$self->{parameters} = [];
-}
-
-sub name {
+	my $opts = shift;
 	
+	$self->{label} = defined $opts->{label} ? $opts->{label} : '';
+	$self->{name} = defined $opts->{name} ? $opts->{name} : '';
+	$self->{description} = defined $opts->{description} ? $opts->{description} : '';
+	$self->{type} = defined $opts->{type} ? $opts->{type} : '';
+	$self->{default} = defined $opts->{default} ? $opts->{default} : '';
 }
 
-sub description {
-	
-}
-
-sub parameters {
-	my $self = shift;
-	return $self->{parameters};
-}
-
-sub query {
-}
-
-sub columns {
-}
-
-sub columnNames {
-}
-
-sub columnClasses {	
-}
-
-sub preprocess {
-	my $self = shift;
-	my $row = shift;
-	
-	foreach my $key (keys %$row) {
-		$row->{$key} =~ s/\r//g;
-		$row->{$key} =~ s/\n//g;
-		$row->{$key} =~ s/^\s*|\s*$//;
-	}
-	
-	return $row;
-}
-
-sub process {
-	my $self = shift;
-	my $row = shift;
-	
-	return $row;
-}
-
-sub rows {
-	my $self = shift;
-	my $sth = shift;
-	my @rows = ();
-	
-	while(my $row = $sth->fetchrow_hashref()) {
-		$row = $self->preprocess($row);
-		push @rows, $self->process($row);
-	}
-	return \@rows;
-}

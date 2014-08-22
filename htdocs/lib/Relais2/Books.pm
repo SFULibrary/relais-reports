@@ -2,6 +2,19 @@ package Relais2::Books;
 
 use parent 'Relais2::Report';
 
+sub init {
+	$self->SUPER::init();
+	$self->addParameter(
+		Relais2::Parameter->new({}
+			label => 'Year',
+			name => 'year',
+			description => '',
+			type => 'number',
+			default => (localtime())[5],
+		})
+	);
+}
+
 sub name {
 	return "Pending";	
 }
@@ -31,7 +44,6 @@ sub process {
 	my $row = shift;
 	return $row;
 }
-
 
 sub columnNames {
 	return {
