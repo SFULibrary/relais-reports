@@ -9,17 +9,7 @@
 </head>
 <body>
 
-<nav>
-<ul>
-<li><a href="?report=exhausted">Exhausted</a></li>
-<li><a href="?report=review">Review</a></li>
-<li><a href="?report=pending">Pending</a></li>
-<li><a href="?report=search">Search Manual</a></li>
-<li><a href="?report=duedate">Due date</a></li>
-<li><a href="?report=recall">Recall</a></li>
-<li><a href="?report=books">Books</a></li>
-</ul>
-</nav>
+[% INCLUDE reportlist.tt %]
 
 <h1>[% report.name %]</h1>
 <a class="export" href="?report=[% id %]&amp;format=csv[% FOREACH parameter IN parameters %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %]">CSV</a>

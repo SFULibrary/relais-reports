@@ -9,17 +9,7 @@
 </head>
 <body>
 
-<nav>
-<ul>
-<li><a href="?report=exhausted">Exhausted</a></li>
-<li><a href="?report=review">Review</a></li>
-<li><a href="?report=pending">Pending</a></li>
-<li><a href="?report=search">Search Manual</a></li>
-<li><a href="?report=duedate">Due date</a></li>
-<li><a href="?report=recall">Recall</a></li>
-<li><a href="?report=books">Books</a></li>
-</ul>
-</nav>
+[% INCLUDE reportlist.tt %]
 
 <h1>Internal error</h1>
 <p>There was an error producing the report.</p>
