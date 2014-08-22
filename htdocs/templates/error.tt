@@ -20,25 +20,9 @@
 </ul>
 </nav>
 
-<h1>[% name %]</h1>
-<table border="0" cellspacing="1" class="sortable">
-<thead>
- <tr>
-   [% FOREACH col IN columns %]
-   <th>[% columnNames.$col %]</th>
-   [% END %]
-   </tr> 
- </tr>
-</thead>
-<tbody>
-[% FOREACH row IN rows %]
-  <tr>
-    [% FOREACH col IN columns %]
-    	<td>[% row.$col %]</td>
-    [% END %]
-  </tr>
-[% END %]
-</tbody> 
- </table>
+<h1>Internal error</h1>
+<p>There was an error producing the report.</p>
+<p>[% message %]</p>
+
  </body>
  </html>
