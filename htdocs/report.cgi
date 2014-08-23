@@ -21,7 +21,6 @@ use Try::Tiny;
 use lib './lib';
 
 use Text::CSV;
-use IO::Wrap;
 
 use Relais2::Duedate;
 use Relais2::Recall;
