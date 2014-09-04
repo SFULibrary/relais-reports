@@ -22,7 +22,17 @@
 <input type="hidden" name="report" value="[% id %]"/>
 [% FOREACH parameter IN parameters %]
   <label for="[% parameter.name %]">[% parameter.label %] 
-  	<input type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]"/></label><br />
+  [% IF parameter.type == "select" %]
+    <select name="[% parameter.name %]">
+      <option value="">Select an option</option>
+      [% FOREACH opt IN parameter.options.keys.sort %]
+      <option value="[% opt %]">[% parameter.options.$opt %]</option>
+      [% END %]
+    </select>
+  [% ELSE %]
+  	<input type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]"/></label>
+  [% END %]
+  <br>
 [% END %]
 
 <button type="submit">Submit</button>
@@ -36,7 +46,7 @@
 <table border="0" cellspacing="1" class="sortable">
 <thead>
  <tr>
-   [% FOREACH col IN report.columns %]
+   [% FOREACH col IN report.columns(query) %]
    <th>[% columnNames.$col %]</th>
    [% END %]
    </tr> 
