@@ -2,15 +2,16 @@ package Relais2::Lendingdetails;
 
 =head1 NAME
 
-Relais2::Books - Report books requested more than once in a year.
+Relais2::Lendingdetails - Instutional lending details.
 
 =cut
 
 use Relais2::Parameter;
 use parent 'Relais2::Report';
 
-=head2 init()
+=head2 C<< $report ->init() >>
 
+Add start and end date, and location parameters.
 
 =cut
 
@@ -43,9 +44,21 @@ sub init {
 			}));
 }
 
+=head2 C<< $report->name >>
+
+Return the name of the report.
+
+=cut
+
 sub name {
-	return "Statistics";
+	return "Lending Details";
 }
+
+=head2 C<< $report->query >>
+
+Return the SQL query.
+
+=cut
 
 sub query {
 
@@ -66,11 +79,23 @@ WHERE
 ENDSQL;
 }
 
+=head2 C<< $report->columns >>
+
+Return an arrayref of the SQL columns in the report, in the order they should appear.
+
+=cut
+
 sub columns {
 	return [
 		qw(TYPE REQUEST_NUMBER EXTERNAL_NUMBER DELIVERY_DATE TITLE)
 	];
 }
+
+=head2 C<< $report->columnNames >>
+
+Return a hashref mapping SQL column names to human readable column names.
+
+=cut
 
 sub columnNames {
 	return {
@@ -82,6 +107,12 @@ sub columnNames {
 	};
 }
 
+=head2 C<< $report->columnClasses() >>
+
+Return the html classes for the columns in the report.
+
+=cut
+
 sub columnClasses {
 	return {
 		REQUEST_NUMBER => "requestnum", 
@@ -90,6 +121,11 @@ sub columnClasses {
 	};
 }
 
+=head2 C<< $report->process($row) >>
+
+Process each row by limiting the DELIVERY_DATE column to 10 characters.
+
+=cut
 
 sub process {
 	my $self = shift;
