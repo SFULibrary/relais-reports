@@ -2,9 +2,27 @@ package Relais2::Duedate;
 
 use parent 'Relais2::Report';
 
+=head1 NAME
+
+Relais2::Duedate - Report books past their due.
+
+=cut
+
+=head2 C<< $report->name >>
+
+Return the name of the report.
+
+=cut
+
 sub name {
 	return "Due date";
 }
+
+=head2 C<< $report->query >>
+
+Return the SQL query.
+
+=cut
 
 sub query {
 
@@ -24,6 +42,12 @@ FROM
 ENDSQL;
 }
 
+=head2 C<< $report->columns >>
+
+Return an arrayref of the SQL columns in the report, in the order they should appear.
+
+=cut
+
 sub columns {
 	return [qw(
 		REQUEST_NUMBER TITLE PATRON_NAME PATRON_SURNAME 
@@ -31,12 +55,24 @@ sub columns {
 	)];
 }
 
+=head2 C<< $report->process($row) >>
+
+Process each row by limiting the DUE_DATE column to 10 characters.
+
+=cut
+
 sub process {
 	my $self = shift;
 	my $row = shift;
 	$row->{DUE_DATE} = substr($row->{DUE_DATE}, 0, 10);
 	return $row;
 }
+
+=head2 C<< $report->columnNames >>
+
+Return a hashref mapping SQL column names to human readable column names.
+
+=cut
 
 sub columnNames {
 	return {
@@ -49,6 +85,12 @@ sub columnNames {
 		SUPPLIER_CODE_1 => "Supplier"
 	};
 }
+
+=head2 C<< $report->columnClasses() >>
+
+Return the html classes for the columns in the report.
+
+=cut
 
 sub columnClasses {
 	return {

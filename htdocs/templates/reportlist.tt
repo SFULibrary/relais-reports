@@ -1,4 +1,5 @@
-<nav>
+<h2 id='listheader'>Report list...</h2>
+<nav id='reportlist'>
 <ul>
 <li><a href="?report=exhausted">Exhausted</a></li>
 <li><a href="?report=review">Review</a></li>
@@ -8,5 +9,8 @@
 <li><a href="?report=recall">Recall</a></li>
 <li><a href="?report=books">Books</a></li>
 <li><a href="?report=journals">Journals</a></li>
+<li><a href="?report=lending">Lending statistics</a></li>
+<li><a href="?report=borrowing">Borrowing statistics</a></li>
+<li><a href="?report=borrowingtotals">Borrowing totals</a></li>
 </ul>
 </nav>

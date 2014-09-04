@@ -9,7 +9,7 @@ Relais2::Books - Report books requested more than once in a year.
 use Relais2::Parameter;
 use parent 'Relais2::Report';
 
-=head2 init()
+=head2 C<< $report ->init() >>
 
 Add Year as a report parameter
 
@@ -77,7 +77,6 @@ sub columns {
 		CT TITLE AUTHOR PUBLISHER PUBLICATION_YEAR EDITION ISBN
 	)];
 }
-
 
 =head2 C<< $report->columnNames >>
 

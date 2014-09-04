@@ -2,15 +2,16 @@ package Relais2::Borrowing;
 
 =head1 NAME
 
-Relais2::Books - Report books requested more than once in a year.
+Relais2::Borrowing - Statistics for institutional borrowing.
 
 =cut
 
 use Relais2::Parameter;
 use parent 'Relais2::Report';
 
-=head2 init()
+=head2 C<< $report ->init() >>
 
+Initialize the report by adding two parameters.
 
 =cut
 
@@ -35,13 +36,24 @@ sub init {
 			}));
 }
 
+=head2 C<< $report->name >>
+
+Report name (Borrowing).
+
+=cut
+
 sub name {
-	return "Statistics";
+	return "Borrowing";
 }
+
+=head2 C<< $report->query >>
+
+Returns the text of the SQL query for the report.
+
+=cut
 
 sub query {
 
-	# PIVOT TABLES make my head hurt.
 	return <<'ENDSQL;'
 SELECT 
 	SUPPLIER_CODE_1, [PNS] as PHOTOCOPIES, [LON] as LOANS
@@ -63,9 +75,21 @@ PIVOT (
 ENDSQL;
 }
 
+=head2 C<< $report->columns >>
+
+Return an arrayref of the SQL columns in the report, in the order they should appear.
+
+=cut
+
 sub columns {
 	return [qw(SUPPLIER_CODE_1 PHOTOCOPIES LOANS)];
 }
+
+=head2 C<< $report->columnNames >>
+
+Return a hashref mapping SQL column names to human readable column names.
+
+=cut
 
 sub columnNames {
 	return {

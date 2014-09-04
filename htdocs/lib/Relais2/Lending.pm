@@ -2,15 +2,16 @@ package Relais2::Lending;
 
 =head1 NAME
 
-Relais2::Books - Report books requested more than once in a year.
+Relais2::Books - Lending statistics.
 
 =cut
 
 use Relais2::Parameter;
 use parent 'Relais2::Report';
 
-=head2 init()
+=head2 C<< $report ->init() >>
 
+Add start and end date parameters.
 
 =cut
 
@@ -35,9 +36,21 @@ sub init {
 			}));
 }
 
+=head2 C<< $report->name >>
+
+Return the name of the report.
+
+=cut
+
 sub name {
-	return "Statistics";
+	return "Lending";
 }
+
+=head2 C<< $report->query >>
+
+Return the SQL query.
+
+=cut
 
 sub query {
 
@@ -77,9 +90,21 @@ order by
 ENDSQL;
 }
 
+=head2 C<< $report->columns >>
+
+Return an arrayref of the SQL columns in the report, in the order they should appear.
+
+=cut
+
 sub columns {
 	return [qw(library_symbol loansfilled copiesfilled loansunfilled copiesunfilled)];
 }
+
+=head2 C<< $report->columnNames >>
+
+Return a hashref mapping SQL column names to human readable column names.
+
+=cut
 
 sub columnNames {
 	return {
@@ -91,13 +116,19 @@ sub columnNames {
 	};
 }
 
+=head2 C<< $report->process($row) >>
+
+Process each row by turning the library_symbol data into an HTML link.
+
+=cut
+
 sub process {
 	my $self = shift;
 	my $row = shift;
 	my $startdate = $self->{parameters}->[0]->value($self->{query});
 	my $enddate = $self->{parameters}->[1]->value($self->{query});
 	
-	$row->{library_symbol} = qq[<a href="?report=lendingDetails&amp;loc=] . $row->{library_symbol} . qq[&amp;startdate=${startdate}&amp;enddate=${enddate}">] . $row->{library_symbol} . '</a>';
+	$row->{library_symbol} = qq[<a href="?report=lendingdetails&amp;loc=] . $row->{library_symbol} . qq[&amp;startdate=${startdate}&amp;enddate=${enddate}">] . $row->{library_symbol} . '</a>';
 	return $row;
 }
 

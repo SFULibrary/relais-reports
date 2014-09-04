@@ -70,8 +70,6 @@ sub process {
 	return $row;
 }
 
-
-
 =head2 C<< $report->columnNames >>
 
 Return a hashref mapping SQL column names to human readable column names.
