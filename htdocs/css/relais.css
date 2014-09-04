@@ -3,24 +3,7 @@ body {
 }
 
 nav {
-	border-bottom: 1px solid blue;
-}
-
-nav ul {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	height: 20px;
-}
-
-nav li {
-	display: block;
-	width: 120px;
-	float: left;
-}
-
-nav a {
-	text-decoration: none;
+	display: none;
 }
 
 h1 {

@@ -8,4 +8,7 @@ $(document).ready(function(){
 		$td.empty().append($input);
 		$input.click(function(){this.select()});
 	});
+	$("#listheader").click(function(){
+		$("#reportlist").toggle();
+	})
 });
