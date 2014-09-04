@@ -115,9 +115,9 @@ try {
 				id            => lc($reportID),
 				rows          => $rows,
 				report        => $report,
-				columns       => $report->columns(),
-				columnNames   => $report->columnNames(),
-				columnClasses => $report->columnClasses(),
+				columns       => $report->columns($q),
+				columnNames   => $report->columnNames($q),
+				columnClasses => $report->columnClasses($q),
 				parameters    => $report->parameters(),
 				query         => $q,
 			}) or die "Template processing error: " . $tt->error() . "\n";
@@ -132,9 +132,9 @@ try {
 			{
 				rows          => $rows,
 				name          => $report->name(),
-				columns       => $report->columns(),
-				columnNames   => $report->columnNames(),
-				columnClasses => $report->columnClasses(),
+				columns       => $report->columns($q),
+				columnNames   => $report->columnNames($q),
+				columnClasses => $report->columnClasses($q),
 			}) or die "Template export error: " . $tt->error() . "\n";
 	}
 }

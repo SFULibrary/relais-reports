@@ -15,13 +15,12 @@ And then somewhere far far away...
   my $rows = $report->execute();
   
 =cut
-  
 
 use strict;
 use warnings;
 
 use Data::Dumper;
-$Data::Dumper::Indent = 1;
+$Data::Dumper::Indent   = 1;
 $Data::Dumper::Sortkeys = 1;
 
 =head2 AUTOLOAD
@@ -31,33 +30,38 @@ Make blessed attributes automatically accessible.
 =cut
 
 sub AUTOLOAD {
-    my ($name) = our $AUTOLOAD;
-    $name =~ s/.*:://;
-    my $method = sub {
-        my $self = shift;
+	my ($name) = our $AUTOLOAD;
+	$name =~ s/.*:://;
+	my $method = sub {
+		my $self = shift;
 
-        if (!defined $self) {
-            die "Internal error: undefined \$self in Autoloaded $AUTOLOAD called from " . join(":", caller()) . "\n";
-        }
+		if (!defined $self) {
+			die
+			  "Internal error: undefined \$self in Autoloaded $AUTOLOAD called from "
+			  . join(":", caller()) . "\n";
+		}
 
-        if (!ref $self) {
-            die "Internal error: Unreferenced \$self in Autoloaded $AUTOLOAD / $self " . join(":", caller()) . "\n";
-        }
+		if (!ref $self) {
+			die
+			  "Internal error: Unreferenced \$self in Autoloaded $AUTOLOAD / $self "
+			  . join(":", caller()) . "\n";
+		}
 
-        if (!exists $self->{$name}) {
-            die "Internal error: cannot find $name in $AUTOLOAD called from " . join(":", caller()) . "\n";
-        }
-        if (@_) {
-            return $self->{$name} = shift @_;
-        } else {
-            return $self->{$name};
-        }
-    };
-    {
-        no strict 'refs';
-        *$AUTOLOAD = $method;
-    }
-    goto &$AUTOLOAD;
+		if (!exists $self->{$name}) {
+			die "Internal error: cannot find $name in $AUTOLOAD called from "
+			  . join(":", caller()) . "\n";
+		}
+		if (@_) {
+			return $self->{$name} = shift @_;
+		} else {
+			return $self->{$name};
+		}
+	};
+	{
+		no strict 'refs';
+		*$AUTOLOAD = $method;
+	}
+	goto &$AUTOLOAD;
 }
 
 =head2 C<< new() >>
@@ -67,11 +71,11 @@ Constructor. Automatically calls C<<$self->init()>>.
 =cut
 
 sub new {
-    my $class = shift;
-    my $self  = {};
-    bless $self, $class;
-    $self->init(@_);
-    return $self;
+	my $class = shift;
+	my $self  = {};
+	bless $self, $class;
+	$self->init(@_);
+	return $self;
 }
 
 =head2 C<< $report->init() >>
@@ -85,7 +89,6 @@ sub init {
 	$self->{parameters} = [];
 }
 
-
 =head2 C<< $report->addParameter($parameter) >>
 
 Add a L<Relais::Parameter> to the report.
@@ -93,7 +96,7 @@ Add a L<Relais::Parameter> to the report.
 =cut
 
 sub addParameter {
-	my $self = shift;
+	my $self  = shift;
 	my $param = shift;
 	push @{$self->{parameters}}, $param;
 }
@@ -105,7 +108,7 @@ Return the name of the report.
 =cut
 
 sub name {
-	
+
 }
 
 =head2 C<< $report->query >>
@@ -125,7 +128,7 @@ Return an arrayref of the SQL columns in the report, in the order they should ap
 =cut
 
 sub columns {
-	return []
+	return [];
 }
 
 =head2 C<< $report->columnNames >>
@@ -135,7 +138,7 @@ Return a hashref mapping SQL column names to human readable column names.
 =cut
 
 sub columnNames {
-	return {}
+	return {};
 }
 
 =head2 C<< $report->columnClasses >>
@@ -144,8 +147,8 @@ Return a hashref mapping SQL column names to HTML class attribute values.
 
 =cut
 
-sub columnClasses {	
-	return {}
+sub columnClasses {
+	return {};
 }
 
 =head2 C<< $row = $report->preprocess($row) >>
@@ -156,14 +159,14 @@ Strip out extraneous whitespace from row data
 
 sub preprocess {
 	my $self = shift;
-	my $row = shift;
-	
+	my $row  = shift;
+
 	foreach my $key (keys %$row) {
 		$row->{$key} =~ s/\r//g;
 		$row->{$key} =~ s/\n//g;
 		$row->{$key} =~ s/^\s*|\s*$//;
 	}
-	
+
 	return $row;
 }
 
@@ -175,8 +178,8 @@ Process a row before it is output.
 
 sub process {
 	my $self = shift;
-	my $row = shift;
-	
+	my $row  = shift;
+
 	return $row;
 }
 
@@ -190,10 +193,10 @@ C<<preprocess>> and C<<process>> for each row.
 
 sub rows {
 	my $self = shift;
-	my $sth = shift;
+	my $sth  = shift;
 	my @rows = ();
-	
-	while(my $row = $sth->fetchrow_hashref()) {
+
+	while (my $row = $sth->fetchrow_hashref()) {
 		$row = $self->preprocess($row);
 		push @rows, $self->process($row);
 	}
@@ -209,17 +212,25 @@ are automatically bound.
 
 sub execute {
 	my $self = shift;
-	my $dbh = shift;
-	my $q = shift;
-	
-	my $sth = $dbh->prepare($self->query());
-	
+	my $dbh  = shift;
+	my $q    = shift;
+
+	my $sth = $dbh->prepare($self->query($q));
+
 	foreach my $param (@{$self->parameters()}) {
-		my $value = $param->value($q);	
-		$sth->bind_param($param->bind(), $value);		
+		if ($param->bind()) {
+			my $value = $param->value($q);
+			if (ref $param->bind() eq 'ARRAY') {
+				foreach my $bnd ( @{ $param->bind() } ) {
+					$sth->bind_param($bnd, $value);
+				}
+			} else {
+				$sth->bind_param($param->bind(), $value);
+			}
+		}
 	}
 	$sth->execute();
-	return $self->rows($sth);	
+	return $self->rows($sth);
 }
 
 1;
