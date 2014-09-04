@@ -86,6 +86,7 @@ Initialize the report.
 
 sub init {
 	my $self = shift;
+	$self->{query} = shift;
 	$self->{parameters} = [];
 }
 

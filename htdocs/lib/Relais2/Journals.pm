@@ -17,7 +17,7 @@ Add the year parameter
 
 sub init {
 	my $self = shift;
-	$self->SUPER::init();
+	$self->SUPER::init(@_);
 	$self->addParameter(
 		Relais2::Parameter->new({
 			label => 'Year',

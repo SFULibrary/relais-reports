@@ -16,7 +16,7 @@ use parent 'Relais2::Report';
 
 sub init {
 	my $self = shift;
-	$self->SUPER::init();
+	$self->SUPER::init(@_);
 	$self->addParameter(
 		Relais2::Parameter->new({
 				label       => 'Start date',
@@ -89,6 +89,16 @@ sub columnNames {
 		loansunfilled => 'Loans unfilled',
 		copiesunfilled => 'Copies unfilled',
 	};
+}
+
+sub process {
+	my $self = shift;
+	my $row = shift;
+	my $startdate = $self->{parameters}->[0]->value($self->{query});
+	my $enddate = $self->{parameters}->[1]->value($self->{query});
+	
+	$row->{library_symbol} = qq[<a href="?report=lendingDetails&amp;loc=] . $row->{library_symbol} . qq[&amp;startdate=${startdate}&amp;enddate=${enddate}">] . $row->{library_symbol} . '</a>';
+	return $row;
 }
 
 1;

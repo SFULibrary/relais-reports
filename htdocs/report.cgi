@@ -31,7 +31,10 @@ use Relais2::Search;
 use Relais2::Books;
 use Relais2::Journals;
 use Relais2::Lending;
+use Relais2::Lendingdetails;
 use Relais2::Borrowing;
+use Relais2::Borrowingtotals;
+
 
 =head2 C<< $reportID = getReportID($cgi) >> 
 
@@ -56,8 +59,9 @@ Get the requested report object.
 
 sub getReport {
 	my $reportID  = shift;
+	my $q = shift;
 	my $reportPkg = 'Relais2::' . $reportID;
-	return $reportPkg->new();
+	return $reportPkg->new($q);
 }
 
 =head2 C<< $format = getReportFormat($cgi) >>
@@ -99,7 +103,7 @@ try {
 
 	my $dbh = getConnection('xXxXxXxXxXx');
 	my $reportID     = getReportID($q);
-	my $report       = getReport($reportID);
+	my $report       = getReport($reportID, $q);
 	my $reportFormat = getReportFormat($q);
 	my $rows         = $report->execute($dbh, $q);
 

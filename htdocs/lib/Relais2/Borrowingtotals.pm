@@ -1,4 +1,4 @@
-package Relais2::Borrowing;
+package Relais2::Borrowingtotals;
 
 =head1 NAME
 
@@ -21,7 +21,7 @@ sub init {
 		Relais2::Parameter->new({
 				label       => 'Start date',
 				name        => 'startdate',
-				bind        => ['startdate'],
+				bind        => ['startdateloans', 'startdatecopies'],
 				description => '',
 				type        => 'date',
 			}));
@@ -29,7 +29,7 @@ sub init {
 		Relais2::Parameter->new({
 				label       => 'End date',
 				name        => 'enddate',
-				bind        => ['enddate'],
+				bind        => ['enddateloans', 'enddatecopies'],
 				description => '',
 				type        => 'date',
 			}));
@@ -43,35 +43,38 @@ sub query {
 
 	# PIVOT TABLES make my head hurt.
 	return <<'ENDSQL;'
-SELECT 
-	SUPPLIER_CODE_1, [PNS] as PHOTOCOPIES, [LON] as LOANS
-FROM (		
-	SELECT 
-		SUPPLIER_CODE_1, EXCEPTION_CODE, COUNT(*) as CT
-	FROM 
-		SFUV_REQUEST_DELIVERY
-	WHERE 
-		    DELIVERY_DATE BETWEEN :startdate AND :enddate
-		AND ( EXCEPTION_CODE='PNS' OR EXCEPTION_CODE='LON' )
-		AND LIBRARY_SYMBOL='BVAS'	
-	GROUP BY 
-		SUPPLIER_CODE_1, EXCEPTION_CODE
-) PS
-PIVOT (
-  MAX(CT) FOR EXCEPTION_CODE IN ([PNS], [LON])
-) AS pvt
+select 
+  'loans' as TYPE, count(*) as CT 
+from 
+  sfuv_request_delivery 
+where 
+      library_symbol='BVAS'
+  and service_type='L'
+  and delivery_date BETWEEN :startdateloans AND :enddateloans
+
+union
+
+select 
+  'copies' as TYPE, count(*) as CT 
+from 
+  sfuv_request_delivery 
+where 
+      library_symbol='BVAS'
+  and service_type in ('R','X')
+  and delivery_date BETWEEN :startdatecopies AND :enddatecopies;
 ENDSQL;
 }
 
 sub columns {
-	return [qw(SUPPLIER_CODE_1 PHOTOCOPIES LOANS)];
+	return [
+		qw(TYPE CT)
+	];
 }
 
 sub columnNames {
 	return {
-		SUPPLIER_CODE_1 => 'Library symbol',
-		PHOTOCOPIES     => 'Photocopies',
-		LOANS           => 'Loans'
+		TYPE => 'Type',
+		CT => 'Total',
 	};
 }
 
