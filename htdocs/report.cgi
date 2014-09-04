@@ -30,6 +30,8 @@ use Relais2::Review;
 use Relais2::Search;
 use Relais2::Books;
 use Relais2::Journals;
+use Relais2::Lending;
+use Relais2::Borrowing;
 
 =head2 C<< $reportID = getReportID($cgi) >> 
 
