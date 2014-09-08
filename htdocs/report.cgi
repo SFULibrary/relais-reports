@@ -20,7 +20,7 @@ use Try::Tiny;
 
 use lib './lib';
 
-use Text::CSV;
+use POSIX;
 
 use Relais2::Duedate;
 use Relais2::Recall;
@@ -32,9 +32,9 @@ use Relais2::Books;
 use Relais2::Journals;
 use Relais2::Lending;
 use Relais2::Lendingdetails;
+use Relais2::Lendingrequests;
 use Relais2::Borrowing;
 use Relais2::Borrowingtotals;
-
 
 =head2 C<< $reportID = getReportID($cgi) >> 
 
@@ -59,7 +59,7 @@ Get the requested report object.
 
 sub getReport {
 	my $reportID  = shift;
-	my $q = shift;
+	my $q         = shift;
 	my $reportPkg = 'Relais2::' . $reportID;
 	return $reportPkg->new($q);
 }
@@ -101,7 +101,7 @@ sub getConnection {
 my $q = CGI->new();
 try {
 
-	my $dbh = getConnection('xXxXxXxXxXx');
+	my $dbh          = getConnection('xXxXxXxXxXx');
 	my $reportID     = getReportID($q);
 	my $report       = getReport($reportID, $q);
 	my $reportFormat = getReportFormat($q);
@@ -111,20 +111,28 @@ try {
 			INCLUDE_PATH => ['templates', 'templates'],
 		}) or die "Template loading: $Template::ERROR\n";
 
+	my $stash = {
+		id            => lc($reportID),
+		rows          => $rows,
+		report        => $report,
+		columns       => $report->columns($q),
+		columnNames   => $report->columnNames($q),
+		columnClasses => $report->columnClasses($q),
+		parameters    => $report->parameters(),
+		query         => $q,
+	};
+	
+	if($report->pagination()) {
+		$stash->{totalRows} = $report->rowCount($dbh, $q);
+		$stash->{firstPage} = 1;
+		$stash->{lastPage} = POSIX::ceil($stash->{totalRows} / 100);
+	}
+
 	if ($reportFormat eq 'html') {
 		print $q->header();
 		$tt->process(
-			"html.tt",
-			{
-				id            => lc($reportID),
-				rows          => $rows,
-				report        => $report,
-				columns       => $report->columns($q),
-				columnNames   => $report->columnNames($q),
-				columnClasses => $report->columnClasses($q),
-				parameters    => $report->parameters(),
-				query         => $q,
-			}) or die "Template processing error: " . $tt->error() . "\n";
+			"html.tt", $stash
+		) or die "Template processing error: " . $tt->error() . "\n";
 	}
 	if ($reportFormat eq 'csv') {
 		print $q->header(
@@ -132,14 +140,7 @@ try {
 			-attachment => $reportID . ".csv"
 		);
 		$tt->process(
-			"csv.tt",
-			{
-				rows          => $rows,
-				name          => $report->name(),
-				columns       => $report->columns($q),
-				columnNames   => $report->columnNames($q),
-				columnClasses => $report->columnClasses($q),
-			}) or die "Template export error: " . $tt->error() . "\n";
+			"csv.tt", $stash) or die "Template export error: " . $tt->error() . "\n";
 	}
 }
 catch {
