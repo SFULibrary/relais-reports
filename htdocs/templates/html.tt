@@ -21,16 +21,19 @@
 <legend>Parameters</legend>
 <input type="hidden" name="report" value="[% id %]"/>
 [% FOREACH parameter IN parameters %]
-  <label for="[% parameter.name %]">[% parameter.label %] 
-  [% IF parameter.type == "select" %]
-    <select name="[% parameter.name %]">
-      <option value="">Select an option</option>
-      [% FOREACH opt IN parameter.options.keys.sort %]
-      <option value="[% opt %]">[% parameter.options.$opt %]</option>
-      [% END %]
-    </select>
-  [% ELSE %]
-  	<input type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]"/></label>
+  [% SWITCH parameter.type %]
+  	[% CASE "select" %]
+		<label for="[% parameter.name %]">[% parameter.label %] 
+    	<select name="[% parameter.name %]">
+      	<option value="">Select an option</option>
+      	[% FOREACH opt IN parameter.options.keys.sort %]
+      		<option value="[% opt %]">[% parameter.options.$opt %]</option>
+      	[% END %]
+    	</select>
+    [% CASE "pagination" %]
+	[% CASE %]		    
+		<label for="[% parameter.name %]">[% parameter.label %] 
+	  	<input type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]"/></label>
   [% END %]
   <br>
 [% END %]
@@ -42,7 +45,18 @@
 
 [% END %]
 
-<p>Found [% rows.size %] results.</p>
+[% IF report.pagination %]
+	<div class="pagination">
+		Found [% totalRows %] results, divided into [% lastPage %] pages. <br />
+		[% SET p = 1 %]
+		[% WHILE p <= lastPage %]
+		    <a href="?report=[% id %]&amp;page=[% p %]&amp;[% FOREACH parameter IN parameters %][% IF parameter.name != 'page' %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %][% END %]">[% p %]</a>
+		    [% SET p = p + 1 %]
+		[% END %]
+  	</div>
+[% END %]
+
+<p>Showing [% rows.size %] results.</p>
 <table border="0" cellspacing="1" class="sortable">
 <thead>
  <tr>

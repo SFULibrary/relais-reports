@@ -88,6 +88,9 @@ sub init {
 	my $self = shift;
 	$self->{query} = shift;
 	$self->{parameters} = [];
+	$self->{pagination} = 0;
+	$self->{page} = 0;
+	$self->{total_pages} = 0;
 }
 
 =head2 C<< $report->addParameter($parameter) >>
@@ -120,6 +123,16 @@ Return the SQL query.
 
 sub query {
 	return "";
+}
+
+=head2 C<< $rowCount = $report->rowCount() >>
+
+Count the rows in the report.
+
+=cut
+
+sub rowCountQuery {
+	return '';
 }
 
 =head2 C<< $report->columns >>
@@ -204,6 +217,63 @@ sub rows {
 	return \@rows;
 }
 
+=head2 C<< $page = $reqport->page() >>
+
+Get or set the curernt page.
+
+=cut
+
+sub page {
+	my $self = shift;
+	my $p = shift;
+	if(defined $p) {
+		$self->{page} = $p;
+		return $p;
+	}
+	
+	# get the page from the request parameters.
+	foreach my $param ( @{ $self->parameters() } ) {
+		if($param->name() eq 'page') {
+			return $param->value($self->{query});
+		}
+	}
+	return 1;
+}
+
+=head2 C<< $rowCount = $report->rowCount($dbh) >>
+
+Execute the rowCountQuery() if it is defined and return the count.
+
+=cut
+
+sub rowCount {
+	my $self = shift;
+	my $dbh  = shift;
+	my $q    = shift;
+
+	if( ! $self->rowCountQuery()) {
+		return;
+	}
+
+	my $sth = $dbh->prepare($self->rowCountQuery($q));
+
+	foreach my $param (@{$self->parameters()}) {
+		if ($param->bind()) {
+			my $value = $param->value($q);
+			if (ref $param->bind() eq 'ARRAY') {
+				foreach my $bnd ( @{ $param->bind() } ) {
+					$sth->bind_param($bnd, $value);
+				}
+			} else {
+				$sth->bind_param($param->bind(), $value);
+			}
+		}
+	}
+	$sth->execute();
+	my $row = $sth->fetchrow_hashref();
+	return $row->{CT};
+}
+
 =head2 C<< $rows = $report->execute($dbh) >>
 
 Execute the report and return the cleaned rows. Any report parameters
@@ -229,6 +299,10 @@ sub execute {
 				$sth->bind_param($param->bind(), $value);
 			}
 		}
+	}
+	if($self->pagination()) {
+		$sth->bind_param('page1', $self->page());
+		$sth->bind_param('page2', $self->page());
 	}
 	$sth->execute();
 	return $self->rows($sth);
