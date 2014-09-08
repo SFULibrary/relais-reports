@@ -56,7 +56,7 @@
   	</div>
 [% END %]
 
-<p>Showing [% rows.size %] results.</p>
+<p>Showing [% rows.size %] results[% IF report.pagination %] for page [% page %][% END %].</p>
 <table border="0" cellspacing="1" class="sortable">
 <thead>
  <tr>

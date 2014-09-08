@@ -126,6 +126,7 @@ try {
 		$stash->{totalRows} = $report->rowCount($dbh, $q);
 		$stash->{firstPage} = 1;
 		$stash->{lastPage} = POSIX::ceil($stash->{totalRows} / 100);
+		$stash->{page} = $report->page();
 	}
 
 	if ($reportFormat eq 'html') {
