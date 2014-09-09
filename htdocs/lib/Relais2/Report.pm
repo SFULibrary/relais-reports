@@ -176,6 +176,7 @@ sub preprocess {
 	my $row  = shift;
 
 	foreach my $key (keys %$row) {
+		next unless defined $row->{$key};
 		$row->{$key} =~ s/\r//g;
 		$row->{$key} =~ s/\n//g;
 		$row->{$key} =~ s/^\s*|\s*$//;
