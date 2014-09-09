@@ -6,7 +6,7 @@ Relais2::Search - Items which must be searched manually
 
 =cut
 
-use parent 'Relais2::Report';
+use base 'Relais2::Report';
 
 =head2 C<< $report->name >>
 

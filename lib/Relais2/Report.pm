@@ -7,7 +7,7 @@ Relais2::Report - Abstract base class for Relais reports
 =head1 SYNOPSIS
 
   package Some::Report;
-  use parent 'Relais2::Report';
+  use base 'Relais2::Report';
 
 And then somewhere far far away...
 

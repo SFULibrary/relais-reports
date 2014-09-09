@@ -6,7 +6,7 @@ Relias2::Review - Items needing review
 
 =cut
 
-use parent 'Relais2::Report';
+use base 'Relais2::Report';
 
 =head2 C<< $report->name >>
 

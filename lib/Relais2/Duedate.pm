@@ -1,6 +1,6 @@
 package Relais2::Duedate;
 
-use parent 'Relais2::Report';
+use base 'Relais2::Report';
 
 =head1 NAME
 

@@ -7,7 +7,7 @@ Relais2::Lendingdetails - Instutional lending details.
 =cut
 
 use Relais2::Parameter;
-use parent 'Relais2::Report';
+use base 'Relais2::Report';
 
 =head2 C<< $report ->init() >>
 

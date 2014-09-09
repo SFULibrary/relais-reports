@@ -7,7 +7,7 @@ Relais2::Borrowingtotals - Report books requested more than once in a year.
 =cut
 
 use Relais2::Parameter;
-use parent 'Relais2::Report';
+use base 'Relais2::Report';
 
 =head2 C<< $report->init() >>
 

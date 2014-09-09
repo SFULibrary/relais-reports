@@ -7,7 +7,7 @@ Relais2::Journals - Summary of journal titles requested
 =cut
 
 use Relais2::Parameter;
-use parent 'Relais2::Report';
+use base 'Relais2::Report';
 
 =head2 C<< init() >>
 

@@ -6,7 +6,7 @@ Relais2::Exhausted - Items which cannot be found for delivery
 
 =cut
 
-use parent 'Relais2::Report';
+use base 'Relais2::Report';
 
 =head2 C<< $report->name >>
 
