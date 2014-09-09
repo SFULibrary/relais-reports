@@ -1,3 +1,0 @@
-[% FOREACH col IN columns %]"[% columnNames.$col %]"[% IF NOT loop.last %],[% END %] [% END %]
-[% FOREACH row IN rows %][% FOREACH col IN columns %]"[% row.$col %]"[% IF NOT loop.last %],[% END %][% END %]
-[% END %]
