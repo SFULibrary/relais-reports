@@ -34,6 +34,7 @@ sub init {
 			bind => undef,
 			description => '',
 			type => 'pagination',
+			default => 1,
 		}))			
 #	$self->addParameter(
 #		Relais2::Parameter->new({

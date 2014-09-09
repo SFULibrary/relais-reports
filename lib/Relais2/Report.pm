@@ -235,7 +235,12 @@ sub page {
 	# get the page from the request parameters.
 	foreach my $param ( @{ $self->parameters() } ) {
 		if($param->name() eq 'page') {
-			return $param->value($self->{query});
+			my $v = $param->value($self->{query});
+			if(defined $v) {
+				return $v;
+			} else {
+				return $param->default();
+			}
 		}
 	}
 	return 1;
