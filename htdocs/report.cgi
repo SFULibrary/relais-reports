@@ -18,7 +18,7 @@ use DBI;
 use Template;
 use Try::Tiny;
 
-use lib './lib';
+use lib '../lib';
 
 use POSIX;
 
