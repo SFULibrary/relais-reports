@@ -10,12 +10,15 @@ h1 {
 	clear: both;
 }
 
-a.export {
-	width: 48px;
+span.summary,
+span.export {
 	display: block;
-	position: absolute;
-	right: 0px;
-	top: 40px;
+	width: 50%;
+	float: left;
+}
+
+span.export {
+	text-align: right;
 }
 
 table {

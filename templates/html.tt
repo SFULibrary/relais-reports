@@ -12,7 +12,6 @@
 [% INCLUDE reportlist.tt %]
 
 <h1>[% report.name %]</h1>
-<a class="export" href="?report=[% id %]&amp;format=csv[% FOREACH parameter IN parameters %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %]">CSV</a>
 
 [% IF parameters.size %]
 
@@ -56,7 +55,13 @@
   	</div>
 [% END %]
 
-<p>Showing [% rows.size %] results[% IF report.pagination %] for page [% page %][% END %].</p>
+<p><span class="summary">
+Showing [% rows.size %] results[% IF report.pagination %] for page [% page %][% END %].
+</span>
+<span class="export">
+<a href="?report=[% id %]&amp;format=csv[% FOREACH parameter IN parameters %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %]">CSV</a>
+</span>
+</p>
 <table border="0" cellspacing="1" class="sortable">
 <thead>
  <tr>
