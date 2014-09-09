@@ -108,7 +108,7 @@ try {
 	my $rows         = $report->execute($dbh, $q);
 
 	my $tt = Template->new({
-			INCLUDE_PATH => ['templates', 'templates'],
+			INCLUDE_PATH => ['../templates'],
 		}) or die "Template loading: $Template::ERROR\n";
 
 	my $stash = {
