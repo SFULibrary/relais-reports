@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en_CA">
+<head>
+ <title>Due Date</title>
+ <link rel="StyleSheet" href="css/xXxXxXxXxXx.css" type="text/css">
+ <script src="js/jquery-1.11.1.min.js"></script>
+ <script src="js/jquery.tablesorter.min.js"></script>
+ <script src="js/xXxXxXxXxXx.js"></script>
+</head>
+<body>
+
+[% INCLUDE reportlist.tt %]
+
+<h1>Internal error</h1>
+<p>There was an error producing the report.</p>
+<p>[% message %]</p>
+
+ </body>
+ </html>

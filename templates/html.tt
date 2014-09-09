@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en_CA">
+<head>
+ <title>[% report.name %]</title>
+ <link rel="StyleSheet" href="css/xXxXxXxXxXx.css" type="text/css">
+ <script src="js/jquery-1.11.1.min.js"></script>
+ <script src="js/jquery.tablesorter.min.js"></script>
+ <script src="js/xXxXxXxXxXx.js"></script>
+</head>
+<body>
+
+[% INCLUDE reportlist.tt %]
+
+<h1>[% report.name %]</h1>
+<a class="export" href="?report=[% id %]&amp;format=csv[% FOREACH parameter IN parameters %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %]">CSV</a>
+
+[% IF parameters.size %]
+
+<form method="GET">
+<fieldset>
+<legend>Parameters</legend>
+<input type="hidden" name="report" value="[% id %]"/>
+[% FOREACH parameter IN parameters %]
+  [% SWITCH parameter.type %]
+  	[% CASE "select" %]
+		<label for="[% parameter.name %]">[% parameter.label %] 
+    	<select name="[% parameter.name %]">
+      	<option value="">Select an option</option>
+      	[% FOREACH opt IN parameter.options.keys.sort %]
+      		<option value="[% opt %]">[% parameter.options.$opt %]</option>
+      	[% END %]
+    	</select>
+    [% CASE "pagination" %]
+	[% CASE %]		    
+		<label for="[% parameter.name %]">[% parameter.label %] 
+	  	<input type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]"/></label>
+  [% END %]
+  <br>
+[% END %]
+
+<button type="submit">Submit</button>
+
+</fieldset>
+</form>
+
+[% END %]
+
+[% IF report.pagination %]
+	<div class="pagination">
+		Found [% totalRows %] results, divided into [% lastPage %] pages. <br />
+		[% SET p = 1 %]
+		[% WHILE p <= lastPage %]
+		    <a href="?report=[% id %]&amp;page=[% p %]&amp;[% FOREACH parameter IN parameters %][% IF parameter.name != 'page' %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %][% END %]">[% p %]</a>
+		    [% SET p = p + 1 %]
+		[% END %]
+  	</div>
+[% END %]
+
+<p>Showing [% rows.size %] results[% IF report.pagination %] for page [% page %][% END %].</p>
+<table border="0" cellspacing="1" class="sortable">
+<thead>
+ <tr>
+   [% FOREACH col IN report.columns(query) %]
+   <th>[% columnNames.$col %]</th>
+   [% END %]
+   </tr> 
+ </tr>
+</thead>
+<tbody>
+[% FOREACH row IN rows %]
+  <tr>
+    [% FOREACH col IN columns %]
+    	<td class="[% columnClasses.$col %]">[% row.$col %]</td>
+    [% END %]
+  </tr>
+[% END %]
+</tbody> 
+ </table>
+ </body>
+ </html>
