@@ -64,6 +64,10 @@ sub AUTOLOAD {
 	goto &$AUTOLOAD;
 }
 
+sub DESTROY {
+	
+}
+
 =head2 C<< new() >>
 
 Constructor. Automatically calls C<<$self->init()>>.

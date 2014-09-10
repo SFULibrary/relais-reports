@@ -70,6 +70,10 @@ sub AUTOLOAD {
 	goto &$AUTOLOAD;
 }
 
+sub DESTROY {
+	
+}
+
 =head2 C<< my $param = Relais::Parameter->new({ ... }); >>
 
 Construct a new report parameter. Pass the options in a hash ref.
