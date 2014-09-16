@@ -5,8 +5,8 @@
 <li><a href="?report=review">Review</a></li>
 <li><a href="?report=pending">Pending</a></li>
 <li><a href="?report=search">Search Manual</a></li>
-<li><a href="?report=duedate">Due date</a></li>
-<li><a href="?report=recall">Recall</a></li>
+<li><a href="?report=duedate">Due date View</a></li>
+<li><a href="?report=recall">Recall Notice</a></li>
 <li><a href="?report=books">Books</a></li>
 <li><a href="?report=journals">Journals</a></li>
 <li><a href="?report=lending">Lending statistics</a></li>
