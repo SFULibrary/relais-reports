@@ -22,7 +22,7 @@ sub init {
 		Relais2::Parameter->new({
 				label       => 'Start date',
 				name        => 'startdate',
-				bind        => ['startdateloans', 'startdatecopies'],
+				bind        => 'startdate',
 				description => '',
 				type        => 'date',
 			}));
@@ -30,7 +30,7 @@ sub init {
 		Relais2::Parameter->new({
 				label       => 'End date',
 				name        => 'enddate',
-				bind        => ['enddateloans', 'enddatecopies'],
+				bind        => 'enddate',
 				description => '',
 				type        => 'date',
 			}));
@@ -56,19 +56,39 @@ sub query {
 
 	# PIVOT TABLES make my head hurt.
 	return <<'ENDSQL;'
-select 'loans' as TYPE, count(*) as CT 
-from sfuv_request_delivery 
-where 
-      library_symbol='BVAS'
-  and service_type='L'
-  and delivery_date BETWEEN :startdateloans AND :enddateloans
-union
-select 'copies' as TYPE, count(*) as CT 
-from sfuv_request_delivery 
-where 
-      library_symbol='BVAS'
-  and service_type in ('R','X')
-  and delivery_date BETWEEN :startdatecopies AND :enddatecopies;
+SELECT
+  KIND,
+  COUNT(*) AS CT
+FROM
+  (
+    SELECT
+      CASE
+        WHEN service_type IN ('R', 'X')
+          THEN 'copies'
+        WHEN service_type IN ('L')
+          THEN 'loans'
+        ELSE 'unknown'
+      END AS KIND
+    FROM (
+        SELECT
+            dbo.ID_REQUEST.SERVICE_TYPE,
+            dbo.ID_DELIVERY.DELIVERY_DATE,
+            dbo.ID_LIBRARY.LIBRARY_SYMBOL
+        FROM
+          dbo.ID_LIBRARY
+        INNER JOIN dbo.ID_REQUEST
+        ON
+          dbo.ID_LIBRARY.LIBRARY_ID = dbo.ID_REQUEST.LIBRARY_ID
+        LEFT OUTER JOIN dbo.ID_DELIVERY
+        ON
+          dbo.ID_REQUEST.REQUEST_NUMBER = dbo.ID_DELIVERY.REQUEST_NUMBER
+      ) t2
+    WHERE
+      library_symbol ='BVAS'
+    AND delivery_date BETWEEN :startdate AND :enddate
+  ) t1
+GROUP BY kind
+ORDER BY kind;
 ENDSQL;
 }
 
@@ -80,7 +100,7 @@ Return an arrayref of the SQL columns in the report, in the order they should ap
 
 sub columns {
 	return [
-		qw(TYPE CT)
+		qw(KIND CT)
 	];
 }
 
@@ -92,7 +112,7 @@ Return a hashref mapping SQL column names to human readable column names.
 
 sub columnNames {
 	return {
-		TYPE => 'Type',
+		KIND => 'Type',
 		CT => 'Total',
 	};
 }

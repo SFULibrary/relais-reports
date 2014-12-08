@@ -55,25 +55,47 @@ Returns the text of the SQL query for the report.
 sub query {
 
 	return <<'ENDSQL;'
-SELECT 
-	SUPPLIER_CODE_1,
-    coalesce([CPY], 0) + coalesce([PNS], 0) as PHOTOCOPIES, 
-    coalesce([LON], 0) as LOANS
-FROM (		
-	SELECT 
-		SUPPLIER_CODE_1, coalesce(EXCEPTION_CODE, 'CPY') AS EXCEPTION_CODE, COUNT(*) as CT
-	FROM 
-		SFUV_REQUEST_DELIVERY
-	WHERE 
-		    DELIVERY_DATE BETWEEN :startdate AND :enddate
-		AND ( EXCEPTION_CODE IS NULL OR EXCEPTION_CODE='PNS' OR EXCEPTION_CODE='LON' )
-		AND LIBRARY_SYMBOL='BVAS'	
-	GROUP BY 
-		SUPPLIER_CODE_1, EXCEPTION_CODE
-) PS
-PIVOT (
-  MAX(CT) FOR EXCEPTION_CODE IN ([CPY], [PNS], [LON])
-) AS pvt
+SELECT
+  SUPPLIER_CODE_1,
+  COALESCE([CPY], 0) + COALESCE([PNS], 0) AS PHOTOCOPIES,
+  COALESCE([LON], 0)                      AS LOANS
+FROM
+  (
+    SELECT
+      SUPPLIER_CODE_1,
+      COALESCE(EXCEPTION_CODE, 'CPY') AS EXCEPTION_CODE,
+      COUNT(*)                        AS CT
+    FROM
+      (
+        SELECT
+          dbo.ID_DELIVERY.EXCEPTION_CODE,
+          dbo.ID_DELIVERY.DELIVERY_DATE,
+          dbo.ID_DELIVERY.SUPPLIER_CODE_OVR,
+          dbo.ID_DELIVERY.SUPPLIER_CODE_1,
+          dbo.ID_LIBRARY.LIBRARY_SYMBOL,
+          dbo.ID_LIBRARY.LIBRARY
+        FROM
+          dbo.ID_LIBRARY 
+          INNER JOIN  dbo.ID_REQUEST 
+            ON dbo.ID_LIBRARY.LIBRARY_ID = dbo.ID_REQUEST.LIBRARY_ID
+          LEFT OUTER JOIN dbo.ID_DELIVERY 
+            ON dbo.ID_REQUEST.REQUEST_NUMBER = dbo.ID_DELIVERY.REQUEST_NUMBER
+      )
+      T1
+    WHERE
+      DELIVERY_DATE BETWEEN :startdate AND :enddate
+    AND
+      (
+        EXCEPTION_CODE IS NULL
+      OR EXCEPTION_CODE ='PNS'
+      OR EXCEPTION_CODE ='LON'
+      )
+    AND LIBRARY_SYMBOL='BVAS'
+    GROUP BY
+      SUPPLIER_CODE_1,
+      EXCEPTION_CODE
+  )
+  PS PIVOT ( MAX(CT) FOR EXCEPTION_CODE IN ([CPY], [PNS], [LON]) ) AS pvt
 ENDSQL;
 }
 

@@ -56,37 +56,65 @@ sub query {
 
 	# PIVOT TABLES make my head hurt.
 	return <<'ENDSQL;'
-select 
-  library_symbol, [loanfilled] as loansfilled, [copyfilled] as copiesfilled, 
-  [loanunfilled] as loansunfilled, [copyunfilled] as copiesunfilled,
-  [unknown] as unknown
-from (
-	select 
-		count(*) ct, library_symbol, status 
-	from (
-		select 
-  			library_symbol, 
-  			case 
-    			when(exception_code = 'LON') then 'loanfilled'
-    			when((exception_code is null) or (exception_code = 'PNS')) then 'copyfilled'
-    			when(service_type = 'L' and ((exception_code != null) or (exception_code not in ('PNS', 'LON')))) then 'loanunfilled'
-    			when(service_type = 'X' and ((exception_code != null) or (exception_code not in ('PNS', 'LON')))) then 'copyunfilled'
-    			else 'unknown'
-  			end as status
-			from
-				sfuv_request_delivery
-			where 
-					library_symbol != 'BVAS'
-				and delivery_date BETWEEN :startdate AND :enddate
-	) st
-	group by
-		library_symbol, status
-) ps
-pivot (
- 	max(ct) for status in ([loanfilled], [copyfilled], [loanunfilled], [copyunfilled], [unknown])
-) as pvt
-order by 
-	library_symbol;
+SELECT
+  library_symbol,
+  [loanfilled]   AS loansfilled,
+  [copyfilled]   AS copiesfilled,
+  [loanunfilled] AS loansunfilled,
+  [copyunfilled] AS copiesunfilled,
+  [unknown]      AS UNKNOWN
+FROM (
+    SELECT
+      COUNT(*) ct, library_symbol, status
+    FROM (
+        SELECT
+          library_symbol,
+          CASE
+            WHEN exception_code = 'LON'
+              THEN 'loanfilled'
+            WHEN exception_code IS NULL OR exception_code    = 'PNS'
+              THEN 'copyfilled'
+            WHEN service_type = 'L' 
+                  AND (exception_code != NULL) 
+                  OR (exception_code NOT IN ('PNS', 'LON'))
+              THEN 'loanunfilled'
+            WHEN service_type = 'X' 
+                  AND ((exception_code != NULL)
+                    OR exception_code NOT IN ('PNS', 'LON')
+                  )
+              THEN 'copyunfilled'
+            ELSE 'unknown'
+          END AS status
+        FROM
+          (
+            SELECT
+                dbo.ID_REQUEST.SERVICE_TYPE,
+                dbo.ID_DELIVERY.EXCEPTION_CODE,
+                dbo.ID_DELIVERY.DELIVERY_DATE,
+                dbo.ID_LIBRARY.LIBRARY_SYMBOL
+            FROM
+              dbo.ID_LIBRARY
+            INNER JOIN dbo.ID_REQUEST
+            ON
+              dbo.ID_LIBRARY.LIBRARY_ID = dbo.ID_REQUEST.LIBRARY_ID
+            LEFT OUTER JOIN dbo.ID_DELIVERY
+            ON
+              dbo.ID_REQUEST.REQUEST_NUMBER = dbo.ID_DELIVERY.REQUEST_NUMBER
+          )
+          T1
+        WHERE
+          library_symbol != 'BVAS'
+        AND delivery_date BETWEEN :startdate AND :enddate
+      )
+      st
+    GROUP BY
+      library_symbol,
+      status
+  )
+  ps pivot ( MAX(ct) FOR status IN ([loanfilled], [copyfilled], [loanunfilled],
+  [copyunfilled], [unknown]) ) AS pvt
+ORDER BY
+  library_symbol;
 ENDSQL;
 }
 
