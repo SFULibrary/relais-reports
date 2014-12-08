@@ -11,6 +11,7 @@
 <li><a href="?report=journals">Journals</a></li>
 <li><a href="?report=lending">Lending statistics</a></li>
 <li><a href="?report=lendingrequests">Lending requests</a></li>
+<li><a href="?report=lendingdetails">Lending details</a></li>
 <li><a href="?report=borrowing">Borrowing statistics</a></li>
 <li><a href="?report=borrowingtotals">Borrowing totals</a></li>
 </ul>
