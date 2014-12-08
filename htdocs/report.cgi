@@ -147,7 +147,7 @@ try {
 catch {
 	print $q->header();
 	my $tt = Template->new({
-			INCLUDE_PATH => ['templates', 'templates'],
+			INCLUDE_PATH => ['../templates', 'templates'],
 		}) or die "Template loading: $Template::ERROR\n";
 
 	$tt->process(
