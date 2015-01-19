@@ -2,67 +2,126 @@
 <html lang="en_CA">
 <head>
  <title>[% report.name %]</title>
- <link rel="StyleSheet" href="css/xXxXxXxXxXx.css" type="text/css">
+ <link rel="stylesheet" href="css/xXxXxXxXxXx.css">
  <script src="js/jquery-1.11.1.min.js"></script>
  <script src="js/jquery.tablesorter.min.js"></script>
  <script src="js/xXxXxXxXxXx.js"></script>
+
+ <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+ <link rel="stylesheet" href="css/bootstrap-theme.min.css" type="text/css">
+ <script src="js/bootstrap.min.js"></script>
 </head>
 <body>
 
-[% INCLUDE reportlist.tt %]
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Relais Reports</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Lists <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="?report=exhausted">Exhausted</a></li>
+                <li><a href="?report=review">Review</a></li>
+                <li><a href="?report=pending">Pending</a></li>
+                <li><a href="?report=search">Search manual</a></li>
+                <li><a href="?report=duedate">Due date</a></li>
+                <li><a href="?report=recall">Recall</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Statistics <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="?report=books">Books</a></li>
+                <li><a href="?report=journals">Journals</a></li>
+                <li><a href="?report=lending">Lending statistics</a></li>
+                <li><a href="?report=lendingrequests">Lending requests</a></li>
+                <li><a href="?report=lendingdetails">Lending details</a></li>
+                <li><a href="?report=borrowing">Borrowing statistics</a></li>
+                <li><a href="?report=borrowingtotals">Borrowing totals</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Overdues <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="?report=lendingoutdated">Lending outdated</a></li>
+                <li><a href="?report=lendingoverdues">Lending overdues</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+  <div class='container'>
 
 <h1>[% report.name %]</h1>
 
 [% IF parameters.size %]
 
-<form method="GET">
+<form method="GET" class="form-horizontal">
 <fieldset>
 <legend>Parameters</legend>
 <input type="hidden" name="report" value="[% id %]"/>
+
 [% FOREACH parameter IN parameters %]
+  [% IF parameter.type != "pagination" %]
+  <div class="form-group">
+  <label for="[% parameter.name %]" class="col-sm-2 control-label">[% parameter.label %]</label>
+  <div class="col-sm-10">
   [% SWITCH parameter.type %]
-  	[% CASE "select" %]
-		<label for="[% parameter.name %]">[% parameter.label %] 
+  	[% CASE "select" %]  		
     	<select name="[% parameter.name %]">
       	<option value="">Select an option</option>
       	[% FOREACH opt IN parameter.options.keys.sort %]
       		<option value="[% opt %]">[% parameter.options.$opt %]</option>
       	[% END %]
     	</select>
-    [% CASE "pagination" %]
 	[% CASE %]		    
-		<label for="[% parameter.name %]">[% parameter.label %] 
-	  	<input default="[% parameter.default %]" type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]"/></label>
+	  	<input default="[% parameter.default %]" type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]"/>
   [% END %]
-  <br>
+  </div>
+  </div>
+  [% END %]
 [% END %]
 
-<button type="submit">Submit</button>
-
+<div class="form-group">
+<div class="col-sm-offset-2 col-sm-10">
+<button type="submit" class="btn btn-default">Submit</button>
+<button type="submit" class="btn btn-default" name="format" value="csv">CSV</button>
+</div>
+</div>
 </fieldset>
 </form>
 
 [% END %]
 
 [% IF report.pagination %]
-	<div class="pagination">
-		Found [% totalRows %] results, divided into [% lastPage %] pages. <br />
+  <p>Found [% totalRows %] results, divided into [% lastPage %] pages. Showing page [% page %].</p>
+  <nav>
+  <ul class="pagination">
 		[% SET p = 1 %]
 		[% WHILE p <= lastPage %]
-		    <a href="?report=[% id %]&amp;page=[% p %]&amp;[% FOREACH parameter IN parameters %][% IF parameter.name != 'page' %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %][% END %]">[% p %]</a>
+		    <li><a href="?report=[% id %]&amp;page=[% p %]&amp;[% FOREACH parameter IN parameters %][% IF parameter.name != 'page' %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %][% END %]">[% p %]</a></li>
 		    [% SET p = p + 1 %]
 		[% END %]
-  	</div>
+	</ul>
+</nav>
 [% END %]
 
 <p><span class="summary">
 Showing [% rows.size %] results[% IF report.pagination %] for page [% page %][% END %].
 </span>
-<span class="export">
-<a href="?report=[% id %]&amp;format=csv[% FOREACH parameter IN parameters %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %]">CSV</a>
-</span>
-</p>
-<table border="0" cellspacing="1" class="sortable">
+<table border="0" cellspacing="1" class="sortable table table-condensed table-striped table-hover">
 <thead>
  <tr>
    [% FOREACH col IN report.columns(query) %]
@@ -81,5 +140,8 @@ Showing [% rows.size %] results[% IF report.pagination %] for page [% page %][% 
 [% END %]
 </tbody> 
  </table>
+ 
+ </div>
+ 
  </body>
  </html>
