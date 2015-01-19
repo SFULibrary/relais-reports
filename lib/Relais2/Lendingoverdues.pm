@@ -9,7 +9,7 @@ Relais2::Lendingoutdated - Loans overdue
 use Relais2::Parameter;
 use base 'Relais2::Report';
 
-# use DateTime;
+use DateTime;
 
 =head2 C<< $report ->init() >>
 
@@ -36,7 +36,7 @@ sub init {
 				bind        => ['cutoff'],
 				description => '',
 				type        => 'date',
-				# default     => DateTime->now()->subtract(years => 1)->ymd()
+				default     => DateTime->now()->subtract(years => 1)->ymd()
 			}));
 }
 
