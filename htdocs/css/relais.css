@@ -1,75 +1,11 @@
-body {
-	font-family: Verdana, Arial, sans-serif;
-}
-
-nav {
-	display: none;
-}
-
-h1 {
-	clear: both;
-}
-
-span.summary,
-span.export {
-	display: block;
-	width: 50%;
-	float: left;
-}
-
-span.export {
-	text-align: right;
-}
-
-table {
-	padding: 0px;
-	margin: 0px;
-	background: #BBBBBB;
-}
-
-tr {
-	padding: 0px;
-	margin: 0px;
-}	
-
-td {
-	padding: 2px;
-	margin: 0px;
-	font-family: Verdana, Arial, sans-serif;
-	font-size: 80%;
-}
-
-tr:nth-child(odd) {
-	background-color: #eee;
-	border: 0;
-}
-
-tr:nth-child(even) {
-	background-color: #fff;
-	border: 0;
-}
-
 td.date, td.requestnum {
 	white-space: nowrap;
 }
 
 
 th {
-	color: black;
 	background: #AADDEE;
-	font-weight: bold;
-	font-size: 80%;
 	white-space: nowrap;
-}
-
-h1 {
-	font-weight: bold;
-	font-size: 120%;
-}
-
-h2 {
-	font-weight: bold;
-	font-size: 110%;
 }
 
 .sortable .headerSortUp:after {
