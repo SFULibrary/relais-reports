@@ -32,7 +32,7 @@
     [% CASE "pagination" %]
 	[% CASE %]		    
 		<label for="[% parameter.name %]">[% parameter.label %] 
-	  	<input type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]"/></label>
+	  	<input default="[% parameter.default %]" type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]"/></label>
   [% END %]
   <br>
 [% END %]

@@ -35,6 +35,8 @@ use Relais2::Lendingdetails;
 use Relais2::Lendingrequests;
 use Relais2::Borrowing;
 use Relais2::Borrowingtotals;
+use Relais2::Lendingoutdated;
+use Relais2::Lendingoverdues;
 
 =head2 C<< $reportID = getReportID($cgi) >> 
 

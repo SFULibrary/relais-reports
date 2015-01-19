@@ -14,5 +14,8 @@
 <li><a href="?report=lendingdetails">Lending details</a></li>
 <li><a href="?report=borrowing">Borrowing statistics</a></li>
 <li><a href="?report=borrowingtotals">Borrowing totals</a></li>
+<hr>
+<li><a href="?report=lendingoutdated">Lending outdated</a></li>
+<li><a href="?report=lendingoverdues">Lending overdues</a></li>
 </ul>
 </nav>

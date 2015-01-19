@@ -2,7 +2,7 @@ package Relais2::Lending;
 
 =head1 NAME
 
-Relais2::Books - Lending statistics.
+Relais2::Lending - Lending statistics.
 
 =cut
 
