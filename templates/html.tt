@@ -2,11 +2,10 @@
 <html lang="en_CA">
 <head>
  <title>[% report.name %]</title>
- <link rel="stylesheet" href="css/xXxXxXxXxXx.css">
+ <link rel="stylesheet" href="css/relais.css">
  <script src="js/jquery-1.11.1.min.js"></script>
  <script src="js/jquery.tablesorter.min.js"></script>
- <script src="js/xXxXxXxXxXx.js"></script>
-
+ <script src="js/relais.js"></script>
  <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
  <link rel="stylesheet" href="css/bootstrap-theme.min.css" type="text/css">
  <script src="js/bootstrap.min.js"></script>
@@ -106,7 +105,7 @@
 [% END %]
 
 [% IF report.pagination %]
-  <p>Found [% totalRows %] results, divided into [% lastPage %] pages. Showing page [% page %].</p>
+  <p>Found [% totalRows %] results. Showing page [% page %] of [% totalPages %].</p>
   <nav>
   <ul class="pagination">
 		[% SET p = firstPage %]

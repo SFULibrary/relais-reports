@@ -65,7 +65,7 @@ SELECT * FROM (
 	WHERE
 		LIBRARY_SYMBOL = :loc
 ) tmp
-WHERE rn BETWEEN ((:page1 - 1) * 100) AND ( :page2 * 100)
+WHERE rn BETWEEN ((:page1 - 1) * 100) AND ( :page2 * 100 - 1)
 ORDER BY DATE_SUBMITTED DESC;
 ENDSQL;
 }
