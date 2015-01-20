@@ -2,7 +2,7 @@ package Relais2::Lendingrequests;
 
 =head1 NAME
 
-Relais2::Books - Lending statistics.
+Relais2::Lendingrequests - Lending statistics.
 
 =cut
 
@@ -35,21 +35,7 @@ sub init {
 			description => '',
 			type => 'pagination',
 			default => 1,
-		}))			
-#	$self->addParameter(
-#		Relais2::Parameter->new({
-#			label => 'Order by',
-#			name => 'order',
-#			bind => 'order',
-#			description => '',
-#			type => 'select',
-#			options => {
-#				title => 'Title',
-#				request => 'Request number',
-#				patron => 'Patron name',
-#				type => 'Request type',
-#			}
-#		}));
+		}));		
 }
 
 =head2 C<< $report->name >>

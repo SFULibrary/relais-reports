@@ -71,6 +71,12 @@ sub query {
 ENDSQL;
 }
 
+=head2 C<< $report->process($row) >>
+
+Process each row, reformatting the date_entered column.
+
+=cut
+
 sub process {
 	my $self = shift;
 	my $row = shift;
@@ -87,6 +93,12 @@ Return an arrayref of the SQL columns in the report, in the order they should ap
 sub columns {
 	return [qw(request_number library_symbol due_date loan_status_desc)];
 }
+
+=head2 C<< $report->columnClasses() >>
+
+Supply css class names for the request_number and due_date columns.
+
+=cut
 
 sub columnClasses {
 	return {

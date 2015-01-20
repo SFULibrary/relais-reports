@@ -68,6 +68,12 @@ sub columns {
 	return [qw(request_number event_id external_number library_symbol date_entered)];
 }
 
+=head2 C<< $report->process($row) >>
+
+Process each row, reformatting the date_entered column.
+
+=cut
+
 sub process {
 	my $self = shift;
 	my $row = shift;
@@ -90,6 +96,12 @@ sub columnNames {
 		date_entered => 'Date Entered',
 	};
 }
+
+=head2 C<< $report->columnClasses() >>
+
+Supply css class names for the request_number and date_entered columns.
+
+=cut
 
 sub columnClasses {
 	return {
