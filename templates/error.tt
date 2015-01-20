@@ -9,7 +9,6 @@
 </head>
 <body>
 
-[% INCLUDE reportlist.tt %]
 
 <h1>Internal error</h1>
 <p>There was an error producing the report.</p>

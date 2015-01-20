@@ -17,10 +17,10 @@ $Data::Dumper::Sortkeys = 1;
 use DBI;
 use Template;
 use Try::Tiny;
+use POSIX;
+use Config::Tiny;
 
 use lib '../lib';
-
-use POSIX;
 
 use Relais2::Duedate;
 use Relais2::Recall;
@@ -88,22 +88,23 @@ Connect to the named database.
 =cut
 
 sub getConnection {
-	my $id          = shift;
-	my $connections = {
-		xXxXxXxXxXx => ['xXxXxXxXxXx', 'xXxXxXxXxXx',   'xXxXxXxXxXx'],
-		xXxXxXxXxXx => ['xXxXxXxXxXx', 'xXxXxXxXxXx', 'xXxXxXxXxXx'],
-	};
+	my $config = Config::Tiny->read('../config.ini');
+	my $id     = $config->{general}->{default_conn};
+
 	my $dbh = DBI->connect(
-		@{$connections->{$id}},
-		{PrintError => 1, RaiseError => 1}
-	) or die "cannot connect to data source: $DBI::errstr";
+		$config->{$id}->{db_name},
+		$config->{$id}->{db_user},
+		$config->{$id}->{db_pass}, {
+			PrintError => 1,
+			RaiseError => 1
+		}) or die "cannot connect to data source: $DBI::errstr";
 	return $dbh;
 }
 
 my $q = CGI->new();
 try {
 
-	my $dbh          = getConnection('xXxXxXxXxXx');
+	my $dbh          = getConnection();
 	my $reportID     = getReportID($q);
 	my $report       = getReport($reportID, $q);
 	my $reportFormat = getReportFormat($q);
@@ -123,27 +124,27 @@ try {
 		parameters    => $report->parameters(),
 		query         => $q,
 	};
-	
-	if($report->pagination()) {
+
+	if ($report->pagination()) {
 		$stash->{totalRows} = $report->rowCount($dbh, $q);
-		$stash->{firstPage} = 1;
-		$stash->{lastPage} = POSIX::ceil($stash->{totalRows} / 100);
-		$stash->{page} = $report->page();
+		$stash->{totalPages} = POSIX::ceil($stash->{totalRows} / 100);
+		$stash->{firstPage} = ($report->page() - 5 < 1 ? 1 : $report->page - 5);
+		$stash->{lastPage}  = ($report->page() + 5 > $stash->{totalRows} ? $stash->{totalRows} : $report->page() + 5);
+		$stash->{page}      = $report->page();
 	}
 
 	if ($reportFormat eq 'html') {
 		print $q->header();
-		$tt->process(
-			"html.tt", $stash
-		) or die "Template processing error: " . $tt->error() . "\n";
+		$tt->process("html.tt", $stash)
+		  or die "Template processing error: " . $tt->error() . "\n";
 	}
 	if ($reportFormat eq 'csv') {
 		print $q->header(
 			-type       => 'application/octet-stream',
 			-attachment => $reportID . ".csv"
 		);
-		$tt->process(
-			"csv.tt", $stash) or die "Template export error: " . $tt->error() . "\n";
+		$tt->process("csv.tt", $stash)
+		  or die "Template export error: " . $tt->error() . "\n";
 	}
 }
 catch {

@@ -109,7 +109,7 @@
   <p>Found [% totalRows %] results, divided into [% lastPage %] pages. Showing page [% page %].</p>
   <nav>
   <ul class="pagination">
-		[% SET p = 1 %]
+		[% SET p = firstPage %]
 		[% WHILE p <= lastPage %]
 		    <li><a href="?report=[% id %]&amp;page=[% p %]&amp;[% FOREACH parameter IN parameters %][% IF parameter.name != 'page' %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %][% END %]">[% p %]</a></li>
 		    [% SET p = p + 1 %]
