@@ -70,28 +70,23 @@ FROM (
         SELECT
           library_symbol,
           CASE
-            WHEN exception_code = 'LON'
+            WHEN (exception_code = 'LON')
               THEN 'loanfilled'
-            WHEN exception_code IS NULL OR exception_code    = 'PNS'
+            WHEN ((exception_code IS NULL) OR (exception_code = 'PNS'))
               THEN 'copyfilled'
-            WHEN service_type = 'L' 
-                  AND (exception_code != NULL) 
-                  OR (exception_code NOT IN ('PNS', 'LON'))
+            WHEN (service_type = 'L'AND ((exception_code != NULL) OR (exception_code NOT IN ('PNS', 'LON'))))
               THEN 'loanunfilled'
-            WHEN service_type = 'X' 
-                  AND ((exception_code != NULL)
-                    OR exception_code NOT IN ('PNS', 'LON')
-                  )
+            WHEN (service_type = 'X' AND ((exception_code != NULL) OR ( exception_code NOT IN ('PNS', 'LON'))))
               THEN 'copyunfilled'
             ELSE 'unknown'
           END AS status
         FROM
           (
             SELECT
-                dbo.ID_REQUEST.SERVICE_TYPE,
-                dbo.ID_DELIVERY.EXCEPTION_CODE,
-                dbo.ID_DELIVERY.DELIVERY_DATE,
-                dbo.ID_LIBRARY.LIBRARY_SYMBOL
+              dbo.ID_REQUEST.SERVICE_TYPE,
+              dbo.ID_DELIVERY.EXCEPTION_CODE,
+              dbo.ID_DELIVERY.DELIVERY_DATE, 
+              dbo.ID_LIBRARY.LIBRARY_SYMBOL
             FROM
               dbo.ID_LIBRARY
             INNER JOIN dbo.ID_REQUEST
