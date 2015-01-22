@@ -58,10 +58,10 @@ sub query {
 	return <<'ENDSQL;'
 SELECT
   library_symbol,
-  [loanfilled]   AS loansfilled,
-  [copyfilled]   AS copiesfilled,
-  [loanunfilled] AS loansunfilled,
-  [copyunfilled] AS copiesunfilled,
+  coalesce([loanfilled],0)   AS loansfilled,
+  coalesce([copyfilled], 0)   AS copiesfilled,
+  coalesce([loanunfilled], 0) AS loansunfilled,
+  coalesce([copyunfilled], 0) AS copiesunfilled,
   [unknown]      AS UNKNOWN
 FROM (
     SELECT
