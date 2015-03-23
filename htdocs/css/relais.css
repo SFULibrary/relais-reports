@@ -17,3 +17,20 @@ th {
     content: " \2193";
     font-weight: bold;
 }
+
+@media print {
+    nav.navbar,
+    .container h1,
+    .form-horizontal {
+        display: none;
+    }
+
+    .table-condensed {
+        line-height: 0;        
+    }
+
+    .table-condensed td {
+        padding: 0;
+        margin: 0;
+    }
+}
