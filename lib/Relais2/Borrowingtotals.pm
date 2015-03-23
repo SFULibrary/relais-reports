@@ -85,7 +85,8 @@ FROM
       ) t2
     WHERE
       library_symbol ='BVAS'
-    AND delivery_date BETWEEN :startdate AND :enddate
+    AND 	
+      :startdate <= delivery_date AND delivery_date - 1 <= :enddate
   ) t1
 GROUP BY kind
 ORDER BY kind;

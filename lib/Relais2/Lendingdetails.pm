@@ -94,9 +94,10 @@ FROM
       dbo.ID_REQUEST.REQUEST_NUMBER = dbo.ID_DELIVERY.REQUEST_NUMBER
   ) T1
 WHERE
-    delivery_date BETWEEN :startdate AND :enddate
+	:startdate <= delivery_date AND delivery_date - 1 <= :enddate
 AND LIBRARY_SYMBOL = :loc
 AND (EXCEPTION_CODE  IS NULL OR EXCEPTION_CODE IN ('PNS', 'LON'))
+ORDER BY TYPE ASC, EXTERNAL_NUMBER ASC
 ENDSQL;
 }
 

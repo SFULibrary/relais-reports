@@ -99,7 +99,8 @@ FROM (
           T1
         WHERE
           library_symbol != 'BVAS'
-        AND delivery_date BETWEEN :startdate AND :enddate
+        AND 	
+          :startdate <= delivery_date AND delivery_date - 1 <= :enddate
       )
       st
     GROUP BY

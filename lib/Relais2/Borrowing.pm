@@ -83,7 +83,7 @@ FROM
       )
       T1
     WHERE
-      DELIVERY_DATE BETWEEN :startdate AND :enddate
+      :startdate <= delivery_date AND delivery_date - 1 <= :enddate
     AND
       (
         EXCEPTION_CODE IS NULL
