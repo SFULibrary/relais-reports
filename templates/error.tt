@@ -1,18 +1,73 @@
 <!doctype html>
 <html lang="en_CA">
 <head>
- <title>Due Date</title>
- <link rel="StyleSheet" href="css/xXxXxXxXxXx.css" type="text/css">
+ <title>[% report.name %]</title>
+ <link rel="stylesheet" href="css/relais.css">
  <script src="js/jquery-1.11.1.min.js"></script>
  <script src="js/jquery.tablesorter.min.js"></script>
- <script src="js/xXxXxXxXxXx.js"></script>
+ <script src="js/relais.js"></script>
+ <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+ <link rel="stylesheet" href="css/bootstrap-theme.min.css" type="text/css">
+ <script src="js/bootstrap.min.js"></script>
 </head>
 <body>
 
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Relais Reports</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Lists <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="?report=exhausted">Exhausted</a></li>
+                <li><a href="?report=review">Review</a></li>
+                <li><a href="?report=pending">Pending</a></li>
+                <li><a href="?report=search">Search manual</a></li>
+                <li><a href="?report=duedate">Due date</a></li>
+                <li><a href="?report=recall">Recall</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Statistics <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="?report=books">Books</a></li>
+                <li><a href="?report=journals">Journals</a></li>
+                <li><a href="?report=lending">Lending statistics</a></li>
+                <li><a href="?report=lendingrequests">Lending requests</a></li>
+                <li><a href="?report=lendingdetails">Lending details</a></li>
+                <li><a href="?report=borrowing">Borrowing statistics</a></li>
+                <li><a href="?report=borrowingtotals">Borrowing totals</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Overdues <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="?report=lendingoutdated">Lending outdated</a></li>
+                <li><a href="?report=lendingoverdues">Lending overdues</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
 
-<h1>Internal error</h1>
-<p>There was an error producing the report.</p>
+  <div class='container'>
+
+<h1>Internal Error</h1>
+
 <p>[% message %]</p>
 
+ </div>
+ 
  </body>
  </html>
