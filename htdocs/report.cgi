@@ -96,7 +96,6 @@ sub getConnection {
 		$config->{$id}->{db_user},
 		$config->{$id}->{db_pass}, {
 			PrintError => 1,
-			RaiseError => 1
 		}) or die "cannot connect to data source: $DBI::errstr";
 	return $dbh;
 }
@@ -123,6 +122,7 @@ try {
 		columnClasses => $report->columnClasses($q),
 		parameters    => $report->parameters(),
 		query         => $q,
+		summary       => $report->summary($rows, $q),
 	};
 
 	if ($report->pagination()) {

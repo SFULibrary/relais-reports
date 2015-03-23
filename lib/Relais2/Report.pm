@@ -222,6 +222,20 @@ sub rows {
 	return \@rows;
 }
 
+=head2 C<< $summary = $report->summarize($rows) >>
+
+Produce a summary of the data.
+
+=cut
+
+sub summary {
+	my $self = shift;
+	my $rows = shift;
+	my $q = shift;
+	
+	return;
+}
+
 =head2 C<< $page = $reqport->page() >>
 
 Get or set the curernt page.

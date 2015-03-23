@@ -117,9 +117,15 @@
 </nav>
 [% END %]
 
-<p><span class="summary">
-Showing [% rows.size %] results[% IF report.pagination %] for page [% page %][% END %].
-</span>
+<p class="summary">
+[% IF summary %]
+  [% FOREACH line IN summary %]
+    [% line %]<br/>
+  [% END %]
+[% ELSE %]
+  Showing [% rows.size %] results[% IF report.pagination %] for page [% page %][% END %].
+[% END %]
+</p>
 <table border="0" cellspacing="1" class="sortable table table-condensed table-striped table-hover">
 <thead>
  <tr>

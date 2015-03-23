@@ -155,4 +155,41 @@ sub process {
 	return $row;
 }
 
+=head2 C<< $summary = $report->summarize($rows) >>
+
+Produce a summary of the data.
+
+=cut
+
+sub summary {
+	my $self = shift;
+	my $rows = shift;
+	my $q = shift;
+	
+	my $loans = 0;
+	my $copies = 0;
+
+	foreach my $row (@$rows) {
+		if($row->{'TYPE'} eq 'LOAN') {
+			$loans++;
+		} 
+		if($row->{'TYPE'} eq 'COPY') {
+			$copies++;
+		}
+	}
+	
+	$summary = [
+		"Showing $loans loans and $copies copies.",
+		""
+		];
+	
+	foreach my $p (@{$self->parameters()}) {
+		$summary->[1] .= $p->label() . ': ' . $p->value($q) . ' ';
+	}
+	
+	return $summary
+}
+
+
+
 1;
