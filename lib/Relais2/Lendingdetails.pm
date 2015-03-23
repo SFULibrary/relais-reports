@@ -135,9 +135,11 @@ Return the html classes for the columns in the report.
 =cut
 
 sub columnClasses {
+	# OK. They aren't dates. But the date class has no wrap and that's what
+	# I needed in a pinch.
 	return {
-		REQUEST_NUMBER => "requestnum", 
-		EXTERNAL_NUMBER => "requestnum",
+		REQUEST_NUMBER => "date", 
+		EXTERNAL_NUMBER => "date",
 		DELIVERY_DATE => "date",
 	};
 }
