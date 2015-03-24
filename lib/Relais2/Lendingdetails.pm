@@ -97,7 +97,7 @@ WHERE
 	:startdate <= delivery_date AND delivery_date - 1 <= :enddate
 AND LIBRARY_SYMBOL = :loc
 AND (EXCEPTION_CODE  IS NULL OR EXCEPTION_CODE IN ('PNS', 'LON'))
-ORDER BY TYPE ASC, EXTERNAL_NUMBER ASC
+ORDER BY TYPE DESC, EXTERNAL_NUMBER ASC
 ENDSQL;
 }
 
@@ -180,15 +180,14 @@ sub summary {
 			$copies++;
 		}
 	}
-	
+	$location = $self->getParameter('loc')->value($q);
+	$start = $self->getParameter('startdate')->value($q);
+	$end = $self->getParameter('enddate')->value($q);
 	$summary = [
-		"Showing $loans loans and $copies copies.",
-		""
+		"Filled requests for $location from $start to $end",		
+		"Total loans: $loans", 
+		"Total copies: $copies", 
 		];
-	
-	foreach my $p (@{$self->parameters()}) {
-		$summary->[1] .= $p->label() . ': ' . $p->value($q) . ' ';
-	}
 	
 	return $summary
 }

@@ -92,6 +92,7 @@ sub init {
 	my $self = shift;
 	$self->{query} = shift;
 	$self->{parameters} = [];
+	$self->{param_names} = {};
 	$self->{pagination} = 0;
 	$self->{page} = 0;
 	$self->{total_pages} = 0;
@@ -107,6 +108,13 @@ sub addParameter {
 	my $self  = shift;
 	my $param = shift;
 	push @{$self->{parameters}}, $param;
+	$self->{param_names}->{$param->name()} = $param;
+}
+
+sub getParameter {
+	my $self = shift;
+	my $name = shift;
+	return $self->{param_names}->{$name};
 }
 
 =head2 C<< $report->name >>

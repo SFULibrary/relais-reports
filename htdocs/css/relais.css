@@ -24,10 +24,16 @@ th {
     .form-horizontal {
         display: none;
     }
-
-    .table-condensed {
+   
+   .table-condensed {
         line-height: 0;        
-        font-size: 70%;
+        font-size: 80%;
+        page-break-inside:auto 
+    }
+    
+    .table-condensed tr {
+    	page-break-inside:avoid; 
+    	page-break-after:auto;
     }
 
     .table-condensed td {
