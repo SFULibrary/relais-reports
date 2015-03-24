@@ -27,10 +27,11 @@ th {
 
     .table-condensed {
         line-height: 0;        
+        font-size: 70%;
     }
 
     .table-condensed td {
-        padding: 0;
-        margin: 0;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
     }
 }

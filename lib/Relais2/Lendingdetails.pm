@@ -123,7 +123,7 @@ sub columnNames {
 	return {
 		TYPE => 'Type',
 		REQUEST_NUMBER => 'SFU ID',
-		EXTERNAL_NUMBER => 'Requester ID',
+		EXTERNAL_NUMBER => 'Request ID',
 		DELIVERY_DATE => 'Date Filled',
 		TITLE => 'Title'
 	};
