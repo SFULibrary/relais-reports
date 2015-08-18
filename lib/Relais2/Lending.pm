@@ -100,7 +100,7 @@ FROM (
         WHERE
           library_symbol != 'BVAS'
         AND 	
-          :startdate <= delivery_date AND delivery_date - 1 <= :enddate
+          :startdate <= delivery_date AND DATEADD(DAY, -1, delivery_date) <= :enddate
       )
       st
     GROUP BY

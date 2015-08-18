@@ -8,6 +8,7 @@ Relais2::Lendingdetails - Instutional lending details.
 
 use Relais2::Parameter;
 use base 'Relais2::Report';
+use POSIX qw(strftime);
 
 =head2 C<< $report ->init() >>
 
@@ -25,6 +26,7 @@ sub init {
 				bind        => ['startdate'],
 				description => '',
 				type        => 'date',
+                                default     => strftime('%Y-%m-%d', localtime())
 			}));
 	$self->addParameter(
 		Relais2::Parameter->new({
@@ -33,6 +35,7 @@ sub init {
 				bind        => ['enddate'],
 				description => '',
 				type        => 'date',
+                                default     => strftime('%Y-%m-%d', localtime())
 			}));
 	$self->addParameter(
 		Relais2::Parameter->new({
@@ -94,7 +97,7 @@ FROM
       dbo.ID_REQUEST.REQUEST_NUMBER = dbo.ID_DELIVERY.REQUEST_NUMBER
   ) T1
 WHERE
-	:startdate <= delivery_date AND delivery_date - 1 <= :enddate
+   :startdate <= delivery_date AND DATEADD(DAY, -1, delivery_date) <= :enddate
 AND LIBRARY_SYMBOL = :loc
 AND (EXCEPTION_CODE  IS NULL OR EXCEPTION_CODE IN ('PNS', 'LON'))
 ORDER BY TYPE DESC, EXTERNAL_NUMBER ASC
