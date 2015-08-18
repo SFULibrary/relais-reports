@@ -51,7 +51,7 @@ Return an arrayref of the SQL columns in the report, in the order they should ap
 
 sub columns {
 	return [qw(
-		REQUEST_NUMBER TITLE PATRON_NAME PATRON_SURNAME PATRON_TYPE_DESC SUPPLIER_CODE_1 
+		REQUEST_NUMBER TITLE NAME PATRON_TYPE_DESC SUPPLIER_CODE_1 
 		SUPPLIER_DATE_SENT NEED_BY_DATE
 	)];
 }
@@ -68,6 +68,7 @@ sub process {
 	my $row = shift;
 	$row->{SUPPLIER_DATE_SENT} = substr($row->{SUPPLIER_DATE_SENT}, 0, 10);
 	$row->{NEED_BY_DATE} = substr($row->{NEED_BY_DATE}, 0, 10);
+	$row->{NAME} = $row->{PATRON_SURNAME} . ', ' . $row->{PATRON_NAME}; 
 	return $row;
 }
 
@@ -82,8 +83,7 @@ sub columnNames {
 	return {
 		REQUEST_NUMBER => 'Request Number',
 		TITLE => 'Title',
-		PATRON_NAME => 'First name',
-		PATRON_SURNAME => 'Surname',
+		NAME => 'Patron',
 		PATRON_TYPE_DESC => 'Status',
 		SUPPLIER_CODE_1 => 'Supplier',
 		SUPPLIER_DATE_SENT => 'Sent',
