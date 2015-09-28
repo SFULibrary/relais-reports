@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en_CA">
 <head>
+ <meta name="google" content="notranslate" />
  <title>[% report.name %]</title>
  <link rel="stylesheet" href="css/relais.css">
  <script src="js/jquery-1.11.1.min.js"></script>
@@ -10,7 +11,7 @@
  <link rel="stylesheet" href="css/bootstrap-theme.min.css" type="text/css">
  <script src="js/bootstrap.min.js"></script>
 </head>
-<body>
+<body class='notranslate'>
 
     <nav class="navbar navbar-default navbar-static-top">
       <div class="container">
@@ -79,14 +80,14 @@
   <div class="col-sm-10">
   [% SWITCH parameter.type %]
   	[% CASE "select" %]  		
-    	<select name="[% parameter.name %]">
-      	<option value="">Select an option</option>
+    	<select name="[% parameter.name %]" class='form-control'>
+      	<option value=''>Select an option</option>
       	[% FOREACH opt IN parameter.options.keys.sort %]
-      		<option value="[% opt %]">[% parameter.options.$opt %]</option>
+      		<option value="[% opt %]" [% IF parameter.value(query) == opt %]selected="selected"[% END %]>[% parameter.options.$opt %]</option>
       	[% END %]
     	</select>
 	[% CASE %]		    
-	  	<input default="[% parameter.default %]" type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]"/>
+	  	<input default="[% parameter.default %]" type="[% parameter.type %]" name="[% parameter.name %]" value="[% parameter.value(query) %]" class='form-control'/>
   [% END %]
   </div>
   </div>
@@ -110,7 +111,7 @@
   <ul class="pagination">
 		[% SET p = firstPage %]
 		[% WHILE p <= lastPage %]
-		    <li><a href="?report=[% id %]&amp;page=[% p %]&amp;[% FOREACH parameter IN parameters %][% IF parameter.name != 'page' %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %][% END %]">[% p %]</a></li>
+		    <li><a href="?report=[% id %]&amp;page=[% p %][% FOREACH parameter IN parameters %][% IF parameter.name != 'page' %]&amp;[% parameter.name %]=[% parameter.value(query) %][% END %][% END %]">[% p %]</a></li>
 		    [% SET p = p + 1 %]
 		[% END %]
 	</ul>
@@ -126,7 +127,7 @@
   Showing [% rows.size %] results[% IF report.pagination %] for page [% page %][% END %].
 [% END %]
 </p>
-<table border="0" cellspacing="1" class="sortable table table-condensed table-striped table-hover">
+<table border="0" cellspacing="1" class="[% IF NOT report.pagination %]sortable[% END %] table table-condensed table-striped table-hover">
 <thead>
  <tr>
    [% FOREACH col IN report.columns(query) %]
