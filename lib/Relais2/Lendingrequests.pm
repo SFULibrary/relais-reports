@@ -29,13 +29,38 @@ sub init {
 			}));
 	$self->addParameter(
 		Relais2::Parameter->new({
-			label => 'Page',
-			name => 'page',			
+				label       => 'Page',
+				name        => 'page',
+				bind        => undef,
+				description => '',
+				type        => 'pagination',
+				default     => 1,
+			}));
+	$self->addParameter(
+		Relais2::Parameter->new({
+			label => 'Order by',
+			name => 'order',
 			bind => undef,
 			description => '',
-			type => 'pagination',
-			default => 1,
-		}));		
+			type => 'select',
+			default => 'DATE_SUBMITTED',
+			options => $self->columnNames(),
+		})
+	);
+	$self->addParameter(
+		Relais2::Parameter->new({
+			label => 'Direction',
+			name => 'dir',
+			bind => undef,
+			description => '',
+			type => 'select',
+			default => 'DESC',
+			options => {
+				'DESC' => 'Descending',
+				'ASC' => 'Ascending'
+			}
+		})
+	);
 }
 
 =head2 C<< $report->name >>
@@ -55,18 +80,30 @@ Return the SQL query.
 =cut
 
 sub query {
-	return <<'ENDSQL;'	
+	my $self = shift;
+	my $q = shift;
+	my $order = $self->getParameter('order')->default();
+	if(defined $self->columnNames()->{$self->getParameter('order')->value($q)}) {
+		$order = $self->getParameter('order')->value($q);
+	}	
+	
+	my $dir = $self->getParameter('dir')->default();
+	if($self->getParameter('dir')->value($q) =~ m/^(ASC|DESC)$/) {
+		$dir = $1;
+	}
+	
+	return <<"ENDSQL;"
 SELECT * FROM (
 	SELECT
 		REQUEST_NUMBER, TITLE, REQUESTER, DATE_SUBMITTED, SERVICE_TYPE_DESC,
-		ROW_NUMBER() OVER (ORDER BY DATE_SUBMITTED DESC) as rn
+		ROW_NUMBER() OVER (ORDER BY $order $dir) as rn
 	FROM
 		IDV_REQUEST_INFO
 	WHERE
 		LIBRARY_SYMBOL = :loc
 ) tmp
-WHERE rn BETWEEN ((:page1 - 1) * 100) AND ( :page2 * 100 - 1)
-ORDER BY DATE_SUBMITTED DESC;
+WHERE rn BETWEEN ((:page1 - 1) * 100 + 1) AND ( :page2 * 100)
+ORDER BY rn;
 ENDSQL;
 }
 
@@ -94,7 +131,8 @@ Return an arrayref of the SQL columns in the report, in the order they should ap
 =cut
 
 sub columns {
-	return [qw(REQUEST_NUMBER TITLE REQUESTER DATE_SUBMITTED SERVICE_TYPE_DESC)];
+	return [
+		qw(REQUEST_NUMBER TITLE REQUESTER DATE_SUBMITTED SERVICE_TYPE_DESC)];
 }
 
 =head2 C<< $report->columnNames >>
@@ -105,10 +143,10 @@ Return a hashref mapping SQL column names to human readable column names.
 
 sub columnNames {
 	return {
-		REQUEST_NUMBER => 'Request number',
-		TITLE => 'Title',
-		REQUESTER => 'Requester',
-		DATE_SUBMITTED => 'Date submitted',
+		REQUEST_NUMBER    => 'Request number',
+		TITLE             => 'Title',
+		REQUESTER         => 'Requester',
+		DATE_SUBMITTED    => 'Date submitted',
 		SERVICE_TYPE_DESC => 'Type',
 	};
 }
@@ -121,7 +159,7 @@ Process each row by turning the library_symbol data into an HTML link.
 
 sub process {
 	my $self = shift;
-	my $row = shift;
+	my $row  = shift;
 	$row->{DATE_SUBMITTED} = substr($row->{DATE_SUBMITTED}, 0, 10);
 	return $row;
 }

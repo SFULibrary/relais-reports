@@ -116,8 +116,10 @@ the default value.
 sub value {
 	my $self = shift;
 	my $q    = shift;
-		
-	if (defined $q->param($self->{name})) {
+	
+	my $v = $q->param($self->{name});
+	
+	if ((defined $v) && ($v ne '')) {
 		return $q->param($self->{name});
 	}
 	return $self->{default};
