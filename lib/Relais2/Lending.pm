@@ -6,6 +6,7 @@ Relais2::Lending - Lending statistics.
 
 =cut
 
+use DateTime;
 use Relais2::Parameter;
 use base 'Relais2::Report';
 
@@ -16,6 +17,9 @@ Add start and end date parameters.
 =cut
 
 sub init {
+  my $start = DateTime->today()->set_day(1);
+  my $end = DateTime->today()->set_day(1)->add(months => 1)->subtract(days => 1);
+  
 	my $self = shift;
 	$self->SUPER::init(@_);
 	$self->addParameter(
@@ -25,6 +29,7 @@ sub init {
 				bind        => ['startdate'],
 				description => '',
 				type        => 'date',
+                                default => $start->ymd(),
 			}));
 	$self->addParameter(
 		Relais2::Parameter->new({
@@ -33,6 +38,7 @@ sub init {
 				bind        => ['enddate'],
 				description => '',
 				type        => 'date',
+                                default => $end->ymd(),
 			}));
 }
 
